@@ -8,6 +8,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import org.json.JSONObject;
 
 public class WeatherDataRetriever {
 
@@ -52,7 +55,17 @@ public class WeatherDataRetriever {
         connection.disconnect();
       }
     }
-    System.out.println(result.toString());
-    return result.toString();
+    // Handle TimeStamp
+    JSONObject jsonObject = new JSONObject(result.toString());
+    LocalDateTime now = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+      "yyyy-MM-dd HH:mm:ss"
+    );
+    String timestamp = now.format(formatter);
+    jsonObject.put("timestamp", timestamp);
+
+    String updatedWeatherData = jsonObject.toString();
+
+    return updatedWeatherData;
   }
 }
