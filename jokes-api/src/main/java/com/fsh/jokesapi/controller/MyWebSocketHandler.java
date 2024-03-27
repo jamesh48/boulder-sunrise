@@ -67,7 +67,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     // Stop the background task or scheduled job that polls the weather API
   }
 
-  @Scheduled(fixedRate = 3000) // 300,000 milliseconds = 5 minutes
+  @Scheduled(fixedRate = 10000) // 300,000 milliseconds = 5 minutes
   public void scheduledWeatherPolling() {
     if (!sessions.isEmpty()) {
       weatherApiCall();

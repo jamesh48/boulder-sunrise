@@ -1,13 +1,16 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import SockJS from 'sockjs-client';
-import { Client, type Message } from '@stomp/stompjs';
+import { UnitConverter, TemperatureUnits } from 'd4m-unit-converter';
+import { WeatherReport } from './types';
+
+const unitConverter = new UnitConverter();
+const converter = unitConverter.TemperatureConverter;
 
 const weatherApiSlice = createApi({
   tagTypes: ['Weather'],
   reducerPath: 'weatherApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   endpoints: (builder) => ({
-    getCurrentWeather: builder.query<{ message: {} }, {}>({
+    getCurrentWeather: builder.query<WeatherReport, {}>({
       providesTags: ['Weather'],
       query: (options) => ({ url: `/bss-weather` }),
       onCacheEntryAdded: async (
@@ -33,7 +36,41 @@ const weatherApiSlice = createApi({
           // console.log('Message received:', event.data);
           // Handle incoming messages from the WebSocket server
           updateCachedData((draft) => {
-            draft.message = JSON.parse(event.data);
+            const data = JSON.parse(event.data);
+            draft.name = data.name;
+            draft.main = {
+              ...data.main,
+              temp: converter
+                .convert(
+                  data.main.temp,
+                  TemperatureUnits.kelvin,
+                  TemperatureUnits.fahrenheit
+                )
+                .toFixed(0),
+              feels_like: converter
+                .convert(
+                  data.main.feels_like,
+                  TemperatureUnits.kelvin,
+                  TemperatureUnits.fahrenheit
+                )
+                .toFixed(0),
+              temp_min: converter
+                .convert(
+                  data.main.temp_min,
+                  TemperatureUnits.kelvin,
+                  TemperatureUnits.fahrenheit
+                )
+                .toFixed(0),
+              temp_max: converter
+                .convert(
+                  data.main.temp_max,
+                  TemperatureUnits.kelvin,
+                  TemperatureUnits.fahrenheit
+                )
+                .toFixed(0),
+            };
+            draft.weather = data.weather;
+            draft.timestamp = data.timestamp;
           });
         };
 
