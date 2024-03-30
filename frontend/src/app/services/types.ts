@@ -1,3 +1,5 @@
+type WeatherMain = 'Clouds' | 'Clear';
+
 export interface WeatherReport {
   visibility: number;
   timezone: number;
@@ -19,7 +21,12 @@ export interface WeatherReport {
   };
   dt: number;
   coord: { lon: number; lat: number };
-  weather: { icon: string; description: string; main: string; id: number }[];
+  weather: {
+    icon: string;
+    description: string;
+    main: WeatherMain;
+    id: number;
+  }[];
   name: string;
   cod: number;
   id: number;
