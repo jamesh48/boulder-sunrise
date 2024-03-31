@@ -22,7 +22,7 @@ const DevInfo = (props: DevInfoProps) => {
     >
       <Box
         sx={{
-          borderLeft: `3px solid ${theme.palette.primary.main}`,
+          borderRight: `3px solid ${theme.palette.primary.main}`,
           height: '100%',
           display: 'flex',
           alignItems: 'center',

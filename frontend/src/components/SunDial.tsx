@@ -100,10 +100,11 @@ const SunDial = (props: SunDialProps) => {
         flexDirection: 'row',
         flex: 1,
         borderLeft: `1px solid ${theme.palette.text.primary}`,
+        borderRight: `1px solid ${theme.palette.text.primary}`,
         position: 'relative',
-        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5) ${
+        backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 25, 0.5) ${
           sunsetPercentage - 3
-        }%, transparent ${sunsetPercentage}%, transparent ${sunrisePercentage}%, rgba(0, 0, 0, 0.5) ${
+        }%, transparent ${sunsetPercentage}%, transparent ${sunrisePercentage}%, rgba(0, 0, 25, 0.5) ${
           sunrisePercentage + 3
         }%)`,
       }}
@@ -112,47 +113,38 @@ const SunDial = (props: SunDialProps) => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          maxHeight: '100%',
+          height: '100%',
         }}
       >
-        {Array.from({ length: 24 }, (_x, i) => (
-          <Box
-            key={i}
-            sx={{
-              flex: 1,
-              display: 'flex',
-              justifyContent: 'flex-end',
-              flexDirection: 'column',
-            }}
-          >
-            <Typography sx={{ lineHeight: 0 }}>
-              {' '}
-              {i > 12 ? 12 - i + 'pm' : i + 'am'} -{' '}
-            </Typography>
-          </Box>
-        )).reverse()}
+        {Array.from({ length: 24 }, (_x, i) => {
+          return (
+            <Box
+              key={i}
+              sx={{
+                flex: 1,
+                display: 'flex',
+                justifyContent: 'flex-end',
+                flexDirection: 'column',
+                color:
+                  i > sunset.getHours() || i <= sunrise.getHours()
+                    ? 'white'
+                    : 'black',
+              }}
+            >
+              <Typography sx={{ lineHeight: 0 }}>
+                {i === 0
+                  ? 12 + 'am'
+                  : i === 12
+                  ? '12pm'
+                  : i > 12
+                  ? i - 12 + 'pm'
+                  : i + 'am'}
+              </Typography>
+            </Box>
+          );
+        }).reverse()}
       </Box>
 
-      <CustomTooltip
-        title={sunsetStr}
-        placement="bottom"
-        isMoonTime={isMoonTime}
-      >
-        <hr
-          ref={sunsetLineRef}
-          style={{
-            position: 'absolute',
-            width: '150%',
-            height: '2px',
-            top: 0,
-            left: 0,
-            border: 'none',
-            borderTop: `2px solid ${theme.palette.text.primary}`,
-            cursor: 'help',
-            opacity: 0.05,
-          }}
-        />
-      </CustomTooltip>
       <Box
         ref={sunContainerRef}
         sx={{
@@ -180,17 +172,28 @@ const SunDial = (props: SunDialProps) => {
         </CustomTooltip>
       </Box>
 
+      <CustomTooltip title={sunsetStr} placement="top" isMoonTime={isMoonTime}>
+        <hr
+          ref={sunsetLineRef}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            top: 0,
+            left: 0,
+            cursor: 'help',
+            opacity: 0.05,
+          }}
+        />
+      </CustomTooltip>
+
       <CustomTooltip title={sunriseStr} placement="top" isMoonTime={isMoonTime}>
         <hr
           ref={sunriseLineRef}
           style={{
             position: 'absolute',
-            width: '150%',
-            height: '2px',
+            width: '100%',
             bottom: 0,
             left: 0,
-            border: 'none',
-            borderBottom: `2px solid ${theme.palette.text.primary}`,
             cursor: 'help',
             opacity: '0.05',
           }}
