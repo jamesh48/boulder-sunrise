@@ -1,7 +1,10 @@
-import { SvgIcon } from '@mui/material';
+import { SvgIcon, SxProps } from '@mui/material';
 
-const PartlyCloudyIcon = () => (
-  <SvgIcon sx={{ fontSize: 100 }}>
+interface PartlyCloudyIconProps {
+  sx?: SxProps;
+}
+const PartlyCloudyIcon = (props: PartlyCloudyIconProps) => (
+  <SvgIcon sx={{ fontSize: 100, ...props.sx }}>
     <svg
       fill="#000000"
       height="800px"
@@ -15,6 +18,7 @@ const PartlyCloudyIcon = () => (
     >
       <g id="XMLID_24_">
         <path
+          fill="yellow"
           id="XMLID_88_"
           d="M433.507,198.24l23.129-31.083c2.902-3.901,3.734-8.966,2.231-13.59c-1.502-4.624-5.152-8.233-9.793-9.683
 		l-36.983-11.551l0.442-38.742c0.056-4.861-2.249-9.448-6.183-12.306c-3.934-2.858-9.008-3.633-13.614-2.077L356.028,91.6
@@ -26,6 +30,7 @@ const PartlyCloudyIcon = () => (
 		c4.641-1.45,8.291-5.059,9.793-9.683c1.503-4.624,0.671-9.689-2.231-13.59L433.507,198.24z"
         />
         <path
+          fill="darkgray"
           id="XMLID_350_"
           d="M312.067,299.893c0.046-1.162,0.068-2.324,0.068-3.487c0-49.407-40.196-89.603-89.604-89.603
 		c-38.41,0-71.816,24.208-84.349,59.325c-1.85-0.142-3.708-0.213-5.568-0.213c-40.058,0-72.677,32.46-72.931,72.46

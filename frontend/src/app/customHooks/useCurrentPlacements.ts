@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WeatherReport } from '../services/types';
 
-const constructMountainDate = (rawTimestamp: number) => {
+export const constructMountainDate = (rawTimestamp: number) => {
   const adjustedTimestamp = rawTimestamp * 1000;
   const utcDate = new Date(adjustedTimestamp);
   const mountainDate = new Date(

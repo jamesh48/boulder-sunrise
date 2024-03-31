@@ -1,7 +1,11 @@
-import { SvgIcon } from '@mui/material';
+import { SvgIcon, SxProps } from '@mui/material';
 
-const SunIcon = () => (
-  <SvgIcon sx={{ fontSize: 100 }}>
+interface SunIconProps {
+  sx?: SxProps;
+}
+
+const SunIcon = (props: SunIconProps) => (
+  <SvgIcon sx={{ fontSize: 100, ...props.sx }}>
     <svg
       fill="yellow"
       height="1200px"

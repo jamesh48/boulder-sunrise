@@ -1,14 +1,14 @@
 'use client';
 import { Provider } from 'react-redux';
 import GlobalStore from './app/store';
-import WeatherReport from './components/WeatherReport';
+import BoulderShines from './components/BoulderShines';
 
 const App = (props: {}) => {
   GlobalStore.prototype.configureGlobalStore({});
 
   return (
     <Provider store={GlobalStore.prototype.getStore()}>
-      <WeatherReport />
+      <BoulderShines />
     </Provider>
   );
 };
