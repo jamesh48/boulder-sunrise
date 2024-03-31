@@ -37,7 +37,7 @@ const CustomTooltip = styled(
 )(({ theme, isMoonTime }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: isMoonTime ? theme.palette.primary.light : 'yellow',
-    color: 'white',
+    color: isMoonTime ? 'white' : 'black',
     boxShadow: theme.shadows[1],
     fontSize: 11,
   },
