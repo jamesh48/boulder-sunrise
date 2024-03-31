@@ -53,10 +53,12 @@ const SunDial = (props: SunDialProps) => {
     useCurrentPlacements(props.weatherReport);
 
   const sunrise = constructMountainDate(props.weatherReport?.sys.sunrise || 0);
-  const sunriseStr = `Sunrise: ${sunrise.getHours()}:${sunrise.getMinutes()}`;
+  const sunriseStr = `Sunrise: ${sunrise.getHours()}:${sunrise.getMinutes()}am`;
 
   const sunset = constructMountainDate(props.weatherReport?.sys.sunset || 0);
-  const sunsetStr = `Sunset: ${sunset.getHours()}:${sunset.getMinutes()}`;
+  const sunsetStr = `Sunset: ${
+    sunset.getHours() - 12
+  }:${sunset.getMinutes()}pm`;
 
   const now = moment();
   const isMoonTime = now.isBefore(sunrise) || now.isAfter(sunset);
@@ -131,7 +133,11 @@ const SunDial = (props: SunDialProps) => {
         )).reverse()}
       </Box>
 
-      <Tooltip title={sunsetStr} placement="top">
+      <CustomTooltip
+        title={sunsetStr}
+        placement="bottom"
+        isMoonTime={isMoonTime}
+      >
         <hr
           ref={sunsetLineRef}
           style={{
@@ -146,7 +152,7 @@ const SunDial = (props: SunDialProps) => {
             opacity: 0.05,
           }}
         />
-      </Tooltip>
+      </CustomTooltip>
       <Box
         ref={sunContainerRef}
         sx={{
@@ -174,7 +180,7 @@ const SunDial = (props: SunDialProps) => {
         </CustomTooltip>
       </Box>
 
-      <Tooltip title={sunriseStr} placement="top">
+      <CustomTooltip title={sunriseStr} placement="top" isMoonTime={isMoonTime}>
         <hr
           ref={sunriseLineRef}
           style={{
@@ -189,7 +195,7 @@ const SunDial = (props: SunDialProps) => {
             opacity: '0.05',
           }}
         />
-      </Tooltip>
+      </CustomTooltip>
     </Box>
   );
 };
