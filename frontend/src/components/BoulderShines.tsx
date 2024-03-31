@@ -1,6 +1,6 @@
 import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SunDial from './SunDial';
 import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
 import DataView from './DataView';
@@ -20,6 +20,18 @@ const BoulderShines = () => {
   const handleDevView = (flag: boolean) => {
     setDevView(flag);
   };
+
+  useEffect(() => {
+    if (devView) {
+      setDataView(false);
+    }
+  }, [devView]);
+
+  useEffect(() => {
+    if (dataView) {
+      setDevView(false);
+    }
+  }, [dataView]);
 
   const theme = createTheme({
     palette: {
