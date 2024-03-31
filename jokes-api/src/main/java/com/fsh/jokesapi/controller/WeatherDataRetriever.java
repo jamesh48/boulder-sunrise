@@ -1,6 +1,5 @@
 package com.fsh.jokesapi.controller;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,9 +16,8 @@ public class WeatherDataRetriever {
   public static final String OPENWEATHERMAP_API_KEY;
 
   static {
-    // Load API key from environment variables or .env file
-    Dotenv dotenv = Dotenv.configure().load();
-    OPENWEATHERMAP_API_KEY = dotenv.get("OPENWEATHERMAP_API_KEY");
+    // Load API key from environment variables
+    OPENWEATHERMAP_API_KEY = System.getenv("OPENWEATHERMAP_API_KEY");
   }
 
   public String retrieveWeatherData() {
