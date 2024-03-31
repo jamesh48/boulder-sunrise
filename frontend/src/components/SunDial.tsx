@@ -111,6 +111,7 @@ const SunDial = (props: SunDialProps) => {
     >
       <Box
         sx={{
+          paddingLeft: '.5rem',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
