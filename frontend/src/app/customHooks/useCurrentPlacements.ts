@@ -12,7 +12,7 @@ export const constructMountainDate = (rawTimestamp: number) => {
   return mountainDate;
 };
 
-const useCurrentPlacements = (data: WeatherReport | undefined) => {
+export const useCurrentPlacements = (data: WeatherReport | undefined) => {
   const [sunPosition, setSunPosition] = useState<number>();
   const [sunriseLinePosition, setSunriseLinePosition] = useState<number>();
   const [sunsetLinePosition, setSunsetLinePosition] = useState<number>();
@@ -57,5 +57,3 @@ const useCurrentPlacements = (data: WeatherReport | undefined) => {
 
   return [sunPosition, sunriseLinePosition, sunsetLinePosition];
 };
-
-export default useCurrentPlacements;

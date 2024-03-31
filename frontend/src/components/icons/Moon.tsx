@@ -1,10 +1,12 @@
-import { SvgIcon } from '@mui/material';
+import { SvgIcon, SxProps } from '@mui/material';
 
-interface MoonIconProps {}
+interface MoonIconProps {
+  sx?: SxProps;
+}
 
 const MoonIcon = (props: MoonIconProps) => {
   return (
-    <SvgIcon sx={{ fontSize: 100 }}>
+    <SvgIcon sx={{ fontSize: 100, ...props.sx }}>
       <svg
         fill="blue"
         height="800px"

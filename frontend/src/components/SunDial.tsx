@@ -1,31 +1,47 @@
 import { useRef, useEffect } from 'react';
-import { Box, Typography, Tooltip, useTheme } from '@mui/material';
-import PartlyCloudyIcon from './icons/PartlyCloudy';
-import SunIcon from './icons/SunIcon';
-import { WeatherReport } from '@/app/services/types';
-import useCurrentPlacements, {
-  constructMountainDate,
-} from '@/app/customHooks/useCurrentPlacements';
-import { useCurrentWindowPercentages } from '@/app/customHooks/useCurrentWindowPercentages';
+import {
+  Box,
+  Typography,
+  Tooltip,
+  useTheme,
+  tooltipClasses,
+  styled,
+  TooltipProps,
+} from '@mui/material';
 import moment from 'moment';
-import MoonIcon from './icons/Moon';
+
+import { WeatherReport } from '@/app/services/types';
+import {
+  constructMountainDate,
+  useCurrentPlacements,
+  useCurrentWindowPercentages,
+} from '@/app/customHooks';
+import { MoonIcon, SunIcon, PartlyCloudyIcon } from './icons';
 
 interface SunDialProps {
   dataView: boolean;
-
   weatherReport: WeatherReport | undefined;
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
 
-const calculateIconOffset = (
-  position: number,
-  weather: WeatherReport['weather'][number]['main'] | 'Moon'
-) =>
-  ({
-    Moon: position / 2.4,
-    Clear: position / 3.2,
-    Clouds: position / 3.2,
-  }[weather]);
+interface CustomTooltipProps extends TooltipProps {
+  isMoonTime: boolean;
+}
+
+const CustomTooltip = styled(
+  ({ className, children, title, ...props }: CustomTooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} title={title}>
+      {children}
+    </Tooltip>
+  )
+)(({ theme, isMoonTime }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: isMoonTime ? theme.palette.primary.light : 'yellow',
+    color: 'white',
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+  },
+}));
 
 const SunDial = (props: SunDialProps) => {
   const theme = useTheme();
@@ -59,12 +75,7 @@ const SunDial = (props: SunDialProps) => {
       props.weatherReport?.weather.length
     ) {
       sunContainerRef.current.style.top =
-        calculateIconOffset(
-          sunPlacement + sunContainerRef.current?.clientHeight,
-          isMoonTime ? 'Moon' : props.weatherReport?.weather[0].main
-        ) + 'px';
-      // sunContainerRef.current.style.left =
-      // props.dataContainerRef.current.clientWidth + 20 + 'px';
+        sunPlacement - sunContainerRef.current.clientHeight / 2 + 'px';
     }
   }, [
     sunPlacement,
@@ -112,7 +123,10 @@ const SunDial = (props: SunDialProps) => {
               flexDirection: 'column',
             }}
           >
-            <Typography sx={{ lineHeight: 0 }}> - {i} - </Typography>
+            <Typography sx={{ lineHeight: 0 }}>
+              {' '}
+              {i > 12 ? 12 - i + 'pm' : i + 'am'} -{' '}
+            </Typography>
           </Box>
         )).reverse()}
       </Box>
@@ -138,15 +152,15 @@ const SunDial = (props: SunDialProps) => {
         sx={{
           position: 'absolute',
           transition: 'opacity .2s ease-in-out',
-          top: '50%',
           left: '10%',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate(-50%)',
         }}
       >
-        <Tooltip
+        <CustomTooltip
           title={new Date().toLocaleTimeString()}
           open={true}
           placement="right"
+          isMoonTime={isMoonTime}
         >
           <Box>
             {isMoonTime ? (
@@ -157,7 +171,7 @@ const SunDial = (props: SunDialProps) => {
               <SunIcon />
             )}
           </Box>
-        </Tooltip>
+        </CustomTooltip>
       </Box>
 
       <Tooltip title={sunriseStr} placement="top">
