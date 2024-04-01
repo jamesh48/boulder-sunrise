@@ -151,7 +151,7 @@ const SunDial = (props: SunDialProps) => {
         sx={{
           position: 'absolute',
           transition: 'opacity .2s ease-in-out',
-          left: '10%',
+          left: '50%',
           transform: 'translate(-50%)',
         }}
       >

@@ -25,12 +25,18 @@ const weatherApiSlice = createApi({
       ) => {
         await cacheDataLoaded;
 
-        const websocketEndpoint =
-          'wss://data.bertramcappuccino.com/websocket-endpoint';
+        const websocketEndpoint = 'ws://localhost:8080/websocket-endpoint';
+        // const websocketEndpoint =
+        // 'wss://data.bertramcappuccino.com/websocket-endpoint';
         const ws = new WebSocket(websocketEndpoint);
 
         ws.onopen = () => {
           console.log('WebSocket connected');
+          ws.send(
+            JSON.stringify({
+              locationVal: 'Boulder,CO,USA',
+            })
+          );
         };
 
         ws.onmessage = (event) => {

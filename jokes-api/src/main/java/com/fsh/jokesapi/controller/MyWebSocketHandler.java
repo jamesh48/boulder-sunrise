@@ -1,5 +1,8 @@
 package com.fsh.jokesapi.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONException;
@@ -43,13 +46,33 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
   // Method to start polling weather API
   public void weatherApiCall() {
     WeatherDataRetriever weatherDataRetriever = new WeatherDataRetriever();
-    String weatherData = weatherDataRetriever.retrieveWeatherData();
 
-    // Iterate over all connected sessions and send the weather data
+    // Create a map to store unique locations and their corresponding sessions
+    Map<String, List<WebSocketSession>> locationSessionsMap = new HashMap<>();
+
     for (WebSocketSession session : sessions.values()) {
+      String locationVal = session
+        .getAttributes()
+        .get("locationVal")
+        .toString();
+
+      // Add the session to the corresponding list of sessions for this location
+      locationSessionsMap
+        .computeIfAbsent(locationVal, k -> new ArrayList<>())
+        .add(session);
+    }
+
+    for (String locationKey : locationSessionsMap.keySet()) {
       try {
-        if (weatherData != null) {
-          session.sendMessage(new TextMessage(weatherData));
+        String weatherData = weatherDataRetriever.retrieveWeatherData(
+          locationKey
+        );
+
+        // Iterate over sessions for this location and send the weather data
+        for (WebSocketSession session : locationSessionsMap.get(locationKey)) {
+          if (weatherData != null) {
+            session.sendMessage(new TextMessage(weatherData));
+          }
         }
       } catch (Exception e) {
         // Handle exception if sending message fails for a session
@@ -85,6 +108,15 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
       // Attempt to parse the payload as JSON
       // If it fails, a JSONException will be thrown
       JSONObject json = new JSONObject(payload);
+
+      String locationVal = json.getString("locationVal");
+
+      if (locationVal != null && !locationVal.isEmpty()) {
+        session.getAttributes().put("locationVal", locationVal);
+      }
+
+      sessions.put(session.getId(), session);
+
       // Handle the valid JSON message
       System.out.println("Received message: " + json);
     } catch (JSONException e) {

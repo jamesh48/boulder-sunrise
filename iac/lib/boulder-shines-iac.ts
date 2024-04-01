@@ -161,6 +161,7 @@ export class BoulderShinesIACStack extends cdk.Stack {
           '/joke',
           '/websocket-endpoint',
           '/healthcheck',
+          '/bss-weather',
         ]),
       ],
     });
