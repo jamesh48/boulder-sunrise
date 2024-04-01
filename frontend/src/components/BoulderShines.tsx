@@ -2,34 +2,47 @@ import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import SunDial from './SunDial';
-import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
+import {
+  useGetCurrentTimeZoneQuery,
+  useGetCurrentWeatherQuery,
+} from '@/app/services/weatherApiSlice';
 import DataView from './DataView';
-import DevInfo from './DevInfo';
+import UserPreferences from './UserPreferences';
 
 const BoulderShines = () => {
-  const { data: weatherReport } = useGetCurrentWeatherQuery({});
+  const [location, setLocation] = useState('Boulder,CO,USA');
+
+  const { data: timeZone } = useGetCurrentTimeZoneQuery({ city: location });
+
+  const { data: weatherReport } = useGetCurrentWeatherQuery({
+    location: location,
+  });
 
   const [dataView, setDataView] = useState(false);
-  const [devView, setDevView] = useState(false);
+  const [userView, setUserView] = useState(false);
   const dataContainerRef = useRef<HTMLDivElement>();
 
   const handleDataView = (flag: boolean) => {
     setDataView(flag);
   };
 
-  const handleDevView = (flag: boolean) => {
-    setDevView(flag);
+  const handleSetLocation = (str: string) => {
+    setLocation(str);
+  };
+
+  const handleUserView = (flag: boolean) => {
+    setUserView(flag);
   };
 
   useEffect(() => {
-    if (devView) {
+    if (userView) {
       setDataView(false);
     }
-  }, [devView]);
+  }, [userView]);
 
   useEffect(() => {
     if (dataView) {
-      setDevView(false);
+      setUserView(false);
     }
   }, [dataView]);
 
@@ -69,8 +82,14 @@ const BoulderShines = () => {
           dataView={dataView}
           weatherReport={weatherReport}
           dataContainerRef={dataContainerRef}
+          location={location}
+          timeZone={timeZone?.result || 'America/Denver'}
         />
-        <DevInfo devView={devView} handleDevView={handleDevView} />
+        <UserPreferences
+          userView={userView}
+          handleUserView={handleUserView}
+          handleSetLocation={handleSetLocation}
+        />
       </Box>
     </ThemeProvider>
   );

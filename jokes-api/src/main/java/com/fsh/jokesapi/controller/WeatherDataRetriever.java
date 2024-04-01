@@ -47,9 +47,10 @@ public class WeatherDataRetriever {
     HttpURLConnection connection = null;
     BufferedReader reader = null;
     StringBuilder result = new StringBuilder();
+
     try {
       URI uri = new URI(
-        "https://api.openweathermap.org/data/2.5/weather?q=" +
+        "https://api.openweathermap.org/data/2.5/weather?units=imperial&q=" +
         locationVal +
         "&appid=" +
         OPENWEATHERMAP_API_KEY

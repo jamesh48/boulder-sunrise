@@ -12,20 +12,22 @@ import moment from 'moment';
 
 import { WeatherReport } from '@/app/services/types';
 import {
-  constructMountainDate,
+  constructLocalDate,
   useCurrentPlacements,
   useCurrentWindowPercentages,
 } from '@/app/customHooks';
 import { MoonIcon, SunIcon, PartlyCloudyIcon } from './icons';
 
 interface SunDialProps {
+  location: string;
   dataView: boolean;
   weatherReport: WeatherReport | undefined;
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
+  timeZone: string;
 }
 
 interface CustomTooltipProps extends TooltipProps {
-  isMoonTime: boolean;
+  ismoontime: boolean;
 }
 
 const CustomTooltip = styled(
@@ -34,10 +36,10 @@ const CustomTooltip = styled(
       {children}
     </Tooltip>
   )
-)(({ theme, isMoonTime }) => ({
+)(({ theme, ismoontime }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: isMoonTime ? theme.palette.primary.light : 'yellow',
-    color: isMoonTime ? 'white' : 'black',
+    backgroundColor: ismoontime ? theme.palette.primary.light : 'yellow',
+    color: ismoontime ? 'white' : 'black',
     boxShadow: theme.shadows[1],
     fontSize: 11,
   },
@@ -50,12 +52,18 @@ const SunDial = (props: SunDialProps) => {
   const sunContainerRef = useRef<HTMLDivElement>();
 
   const [sunPlacement, sunriseLinePlacement, sunsetLinePlacement] =
-    useCurrentPlacements(props.weatherReport);
+    useCurrentPlacements(props.weatherReport, props.timeZone);
 
-  const sunrise = constructMountainDate(props.weatherReport?.sys.sunrise || 0);
+  const sunrise = constructLocalDate(
+    props.weatherReport?.sys.sunrise || 0,
+    props.timeZone
+  );
   const sunriseStr = `Sunrise: ${sunrise.getHours()}:${sunrise.getMinutes()}am`;
 
-  const sunset = constructMountainDate(props.weatherReport?.sys.sunset || 0);
+  const sunset = constructLocalDate(
+    props.weatherReport?.sys.sunset || 0,
+    props.timeZone
+  );
   const sunsetStr = `Sunset: ${
     sunset.getHours() - 12
   }:${sunset.getMinutes()}pm`;
@@ -159,7 +167,7 @@ const SunDial = (props: SunDialProps) => {
           title={new Date().toLocaleTimeString()}
           open={true}
           placement="right"
-          isMoonTime={isMoonTime}
+          ismoontime={isMoonTime}
         >
           <Box>
             {isMoonTime ? (
@@ -173,7 +181,7 @@ const SunDial = (props: SunDialProps) => {
         </CustomTooltip>
       </Box>
 
-      <CustomTooltip title={sunsetStr} placement="top" isMoonTime={isMoonTime}>
+      <CustomTooltip title={sunsetStr} placement="top" ismoontime={isMoonTime}>
         <hr
           ref={sunsetLineRef}
           style={{
@@ -187,7 +195,7 @@ const SunDial = (props: SunDialProps) => {
         />
       </CustomTooltip>
 
-      <CustomTooltip title={sunriseStr} placement="top" isMoonTime={isMoonTime}>
+      <CustomTooltip title={sunriseStr} placement="top" ismoontime={isMoonTime}>
         <hr
           ref={sunriseLineRef}
           style={{

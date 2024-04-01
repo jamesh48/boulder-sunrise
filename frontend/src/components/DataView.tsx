@@ -59,12 +59,12 @@ const DataView = (props: DataViewProps) => {
               textAlign: 'center',
             }}
           >
-            Todays Weather
+            {props.weatherReport?.name} Weather
           </Typography>
           {props.weatherReport && (
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="subtitle1">
-                Temperature: {props.weatherReport.main.temp}°F
+                Current Temp: {props.weatherReport.main.temp}°F
               </Typography>
               <Typography variant="subtitle1">
                 Low: {props.weatherReport.main.temp_min}°F

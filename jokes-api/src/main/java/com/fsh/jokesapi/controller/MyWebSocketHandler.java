@@ -1,5 +1,7 @@
 package com.fsh.jokesapi.controller;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +66,13 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
 
     for (String locationKey : locationSessionsMap.keySet()) {
       try {
+        String encodedLocation = URLEncoder.encode(
+          locationKey,
+          StandardCharsets.UTF_8
+        );
+
         String weatherData = weatherDataRetriever.retrieveWeatherData(
-          locationKey
+          encodedLocation
         );
 
         // Iterate over sessions for this location and send the weather data
