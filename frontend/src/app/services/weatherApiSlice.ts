@@ -25,7 +25,8 @@ const weatherApiSlice = createApi({
       ) => {
         await cacheDataLoaded;
 
-        const websocketEndpoint = 'ws://localhost:8080/websocket-endpoint';
+        const websocketEndpoint =
+          'wss://data.bertramcappuccino.com/websocket-endpoint';
         const ws = new WebSocket(websocketEndpoint);
 
         ws.onopen = () => {
