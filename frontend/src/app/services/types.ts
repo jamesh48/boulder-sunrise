@@ -1,4 +1,4 @@
-type WeatherMain = 'Clouds' | 'Clear';
+type WeatherMain = 'Clouds' | 'Clear' | 'Rain';
 
 export interface WeatherReport {
   visibility: number;

@@ -16,7 +16,8 @@ import {
   useCurrentPlacements,
   useCurrentWindowPercentages,
 } from '@/app/customHooks';
-import { MoonIcon, SunIcon, PartlyCloudyIcon } from './icons';
+import { MoonIcon, SunIcon, PartlyCloudyIcon, MoonCloudsIcon } from './icons';
+import MoonRainIcon from './icons/MoonRain';
 
 interface SunDialProps {
   location: string;
@@ -58,7 +59,9 @@ const SunDial = (props: SunDialProps) => {
     props.weatherReport?.sys.sunrise || 0,
     props.timeZone
   );
-  const sunriseStr = `Sunrise: ${sunrise.getHours()}:${sunrise.getMinutes()}am`;
+  const sunriseStr = `Sunrise: ${sunrise.getHours()}:${
+    sunrise.getMinutes().toString().length === 1 ? '0' : ''
+  }${sunrise.getMinutes()}am`;
 
   const sunset = constructLocalDate(
     props.weatherReport?.sys.sunset || 0,
@@ -171,7 +174,13 @@ const SunDial = (props: SunDialProps) => {
         >
           <Box>
             {isMoonTime ? (
-              <MoonIcon />
+              props.weatherReport?.weather[0].main === 'Clouds' ? (
+                <MoonCloudsIcon />
+              ) : props.weatherReport?.weather[0].main === 'Rain' ? (
+                <MoonRainIcon />
+              ) : (
+                <MoonIcon />
+              )
             ) : props.weatherReport?.weather[0].main === 'Clouds' ? (
               <PartlyCloudyIcon />
             ) : (
