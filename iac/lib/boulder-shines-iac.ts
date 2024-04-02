@@ -13,8 +13,13 @@ interface BoulderShinesIACStackProps extends cdk.StackProps {
     AWS_VPC_ID: string;
     AWS_ALB_LISTENER_ARN: string;
   };
-  svc_env: {
+  fe_svc_env: {
     OPENWEATHERMAP_API_KEY: string;
+    NODE_ENV: 'production';
+  };
+  be_svc_env: {
+    GOOGLEMAPS_APIKEY: string;
+    NODE_ENV: 'production';
   };
 }
 
@@ -74,6 +79,9 @@ export class BoulderShinesIACStack extends cdk.Stack {
           streamPrefix: 'bsh-container-fe',
           logRetention: logs.RetentionDays.FIVE_DAYS,
         }),
+        environment: {
+          ...props.fe_svc_env,
+        },
       }
     );
 
@@ -87,7 +95,7 @@ export class BoulderShinesIACStack extends cdk.Stack {
           logRetention: logs.RetentionDays.FIVE_DAYS,
         }),
         environment: {
-          ...props.svc_env,
+          ...props.be_svc_env,
         },
       }
     );

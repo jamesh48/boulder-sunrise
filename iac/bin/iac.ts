@@ -16,6 +16,7 @@ const {
   AWS_VPC_ID,
   CDK_DEFAULT_ACCOUNT,
   CDK_DEFAULT_REGION,
+  GOOGLEMAPS_APIKEY,
   OPENWEATHERMAP_API_KEY,
 } = process.env;
 
@@ -43,6 +44,10 @@ if (!CDK_DEFAULT_REGION) {
   throw new Error('CDK_DEFAULT_REGION env is not defined!');
 }
 
+if (!GOOGLEMAPS_APIKEY) {
+  throw new Error('GOOGLEMAPS_APIKEY env is not defined!');
+}
+
 if (!OPENWEATHERMAP_API_KEY) {
   throw new Error('OPENWEATHERMAP_API_KEY env is not defined!');
 }
@@ -58,7 +63,12 @@ new BoulderShinesIACStack(app, 'bsh-stack', {
     AWS_DEFAULT_SG,
     AWS_VPC_ID,
   },
-  svc_env: {
+  fe_svc_env: {
     OPENWEATHERMAP_API_KEY,
+    NODE_ENV: 'production',
+  },
+  be_svc_env: {
+    GOOGLEMAPS_APIKEY,
+    NODE_ENV: 'production',
   },
 });
