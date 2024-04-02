@@ -16,12 +16,13 @@ import {
   getUserLocation,
   getUserView,
   setUserLocation,
+  toggleDataView,
   toggleUserView,
 } from '@/app/appSlice';
 
 interface UserPreferencesProps {}
 
-const UserPreferences = (props: UserPreferencesProps) => {
+const UserPreferences = (_props: UserPreferencesProps) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const [validState, setValidState] = useState('');
@@ -117,6 +118,8 @@ const UserPreferences = (props: UserPreferencesProps) => {
                 return states.getStateCodeByStateName(values.state);
               })();
               dispatch(setUserLocation(`${values.city},${stateToSubmit},USA`));
+              // Opening Data View closes user view- two birds one stone
+              dispatch(toggleDataView());
             }}
             initialValues={{ city: defaultCity, state: defaultState }}
             validate={async (values) => {
