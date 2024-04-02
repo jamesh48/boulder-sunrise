@@ -4,7 +4,7 @@ import { WeatherReport } from '../services/types';
 
 export const constructLocalDate = (
   rawTimestamp: number,
-  timeZone: string,
+  timeZone: string | undefined,
   ind?: boolean
 ) => {
   const adjustedTimestamp = ind ? rawTimestamp : rawTimestamp * 1000;
@@ -16,22 +16,24 @@ export const constructLocalDate = (
 
 export const useCurrentPlacements = (
   data: WeatherReport | undefined,
-  timeZone: string
+  timeZone: string | undefined
 ) => {
   const [sunPosition, setSunPosition] = useState<number>();
   const [sunriseLinePosition, setSunriseLinePosition] = useState<number>();
   const [sunsetLinePosition, setSunsetLinePosition] = useState<number>();
 
   useEffect(() => {
-    const now = constructLocalDate(Date.now(), timeZone, true);
-    const windowHeight = window.innerHeight;
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const position = windowHeight - (currentMinutes / 1440) * windowHeight;
-    setSunPosition(position);
+    if (timeZone) {
+      const now = constructLocalDate(Date.now(), timeZone, true);
+      const windowHeight = window.innerHeight;
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      const position = windowHeight - (currentMinutes / 1440) * windowHeight;
+      setSunPosition(position);
+    }
   }, [data, timeZone]);
 
   useEffect(() => {
-    if (data && data.sys && data.sys.sunrise) {
+    if (data && data.sys && data.sys.sunrise && timeZone) {
       const sunriseDate = constructLocalDate(data.sys.sunrise, timeZone);
       const startHour = 0;
       const startMinute = 0;
@@ -46,7 +48,7 @@ export const useCurrentPlacements = (
   }, [data, timeZone]);
 
   useEffect(() => {
-    if (data && data.sys && data.sys.sunset) {
+    if (data && data.sys && data.sys.sunset && timeZone) {
       const sunsetDate = constructLocalDate(data.sys.sunset, timeZone);
       const startHour = 0;
       const startMinute = 0;

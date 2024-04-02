@@ -109,7 +109,7 @@ const UserPreferences = (props: UserPreferencesProps) => {
           }}
         >
           <Formik
-            onSubmit={(values, helpers) => {
+            onSubmit={(values) => {
               const stateToSubmit = (() => {
                 if (values.state.length === 2) {
                   return values.state.toUpperCase();

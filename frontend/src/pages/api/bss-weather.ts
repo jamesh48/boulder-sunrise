@@ -1,11 +1,14 @@
-import { WeatherReport } from '@/app/services/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const response = await fetch(
-    // 'https://data.bertramcappuccino.com/bss-weather?location=Boulder,CO,USA'
-    'http://localhost:8080/bss-weather?location=' + req.query.location
-  );
+  const endpoint = (() => {
+    if (process.env.NODE_ENV === 'production') {
+      return `https://data.bertramcappuccino.com/bss-weather?location=${req.query.location}`;
+    }
+    return 'http://localhost:8080/bss-weather?location=' + req.query.location;
+  })();
+
+  const response = await fetch(endpoint);
   const data = await response.json();
   data.main = {
     ...data.main,

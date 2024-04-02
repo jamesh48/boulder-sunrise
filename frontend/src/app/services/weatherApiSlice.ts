@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { UnitConverter, TemperatureUnits } from 'd4m-unit-converter';
 import { WeatherReport } from './types';
+import { RootState } from '../store';
 
 const weatherApiSlice = createApi({
   tagTypes: ['Weather'],
@@ -17,12 +17,19 @@ const weatherApiSlice = createApi({
       query: (options) => ({
         url: `/bss-weather?location=${encodeURIComponent(options.location)}`,
       }),
-      onCacheEntryAdded: async (arg, { cacheDataLoaded, updateCachedData }) => {
+      onCacheEntryAdded: async (
+        arg,
+        { cacheDataLoaded, updateCachedData, getState }
+      ) => {
         await cacheDataLoaded;
 
-        const websocketEndpoint = 'ws://localhost:8080/websocket-endpoint';
-        // const websocketEndpoint =
-        // 'wss://data.bertramcappuccino.com/websocket-endpoint';
+        const websocketEndpoint = (() => {
+          if ((getState() as RootState).app.nodeEnv === 'production') {
+            return 'wss://data.bertramcappuccino.com/websocket-endpoint';
+          }
+          return 'ws://localhost:8080/websocket-endpoint';
+        })();
+
         const ws = new WebSocket(websocketEndpoint);
 
         ws.onopen = () => {

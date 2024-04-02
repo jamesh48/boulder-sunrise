@@ -1,4 +1,4 @@
-type WeatherMain = 'Clouds' | 'Clear' | 'Rain' | 'Haze';
+export type CurrentWeather = 'Clouds' | 'Clear' | 'Rain' | 'Haze';
 
 export interface WeatherReport {
   visibility: number;
@@ -24,7 +24,7 @@ export interface WeatherReport {
   weather: {
     icon: string;
     description: string;
-    main: WeatherMain;
+    main: CurrentWeather;
     id: number;
   }[];
   name: string;

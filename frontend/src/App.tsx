@@ -2,11 +2,9 @@
 import { Provider } from 'react-redux';
 import GlobalStore from './app/store';
 import BoulderShines from './components/BoulderShines';
+import { AppProps } from './pages';
 
-const App = (props: {
-  userLocation: string;
-  nodeEnv: 'development' | 'test' | 'production';
-}) => {
+const App = (props: AppProps) => {
   GlobalStore.prototype.configureGlobalStore({
     app: {
       nodeEnv: props.nodeEnv,

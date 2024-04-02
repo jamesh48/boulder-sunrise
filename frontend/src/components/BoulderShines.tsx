@@ -1,7 +1,7 @@
 import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { useEffect, useRef, useState, Suspense } from 'react';
-import SunDial from './SunDial';
+import { useRef } from 'react';
+import SunDial from './SunDial/Index';
 import {
   useGetCurrentTimeZoneQuery,
   useGetCurrentWeatherQuery,
@@ -58,15 +58,12 @@ const BoulderShines = () => {
           weatherReport={weatherReport}
           dataContainerRef={dataContainerRef}
         />
-        {isLoggedIn && timeZone?.result ? (
-          // <Suspense fallback={<div>Loading...</div>}>
-          <SunDial
-            weatherReport={weatherReport}
-            dataContainerRef={dataContainerRef}
-            timeZone={timeZone.result || 'America/Denver'}
-          />
-        ) : // </Suspense>
-        null}
+        <SunDial
+          isLoggedIn={isLoggedIn}
+          weatherReport={weatherReport}
+          dataContainerRef={dataContainerRef}
+        />
+
         <UserPreferences />
       </Box>
     </ThemeProvider>
