@@ -64,11 +64,11 @@ new BoulderShinesIACStack(app, 'bsh-stack', {
     AWS_VPC_ID,
   },
   fe_svc_env: {
-    OPENWEATHERMAP_API_KEY,
+    GOOGLEMAPS_APIKEY,
     NODE_ENV: 'production',
   },
   be_svc_env: {
-    GOOGLEMAPS_APIKEY,
+    OPENWEATHERMAP_API_KEY,
     NODE_ENV: 'production',
   },
 });

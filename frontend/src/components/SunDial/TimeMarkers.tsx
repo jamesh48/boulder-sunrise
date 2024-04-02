@@ -10,8 +10,9 @@ interface TimeMarkersProps {
 }
 
 interface ComponentProps {
-  sunset: Date;
-  sunrise: Date;
+  sunset: Date | undefined;
+  sunrise: Date | undefined;
+  isLoggedIn: boolean;
 }
 const Component = (props: ComponentProps) =>
   Array.from({ length: 24 }, (_x, i) => {
@@ -23,10 +24,17 @@ const Component = (props: ComponentProps) =>
           display: 'flex',
           justifyContent: 'flex-end',
           flexDirection: 'column',
-          color:
-            i > props.sunset.getHours() || i <= props.sunrise.getHours()
-              ? 'white'
-              : 'black',
+          color: (() => {
+            if (
+              props.isLoggedIn &&
+              props.sunrise &&
+              props.sunset &&
+              (i > props.sunset.getHours() || i <= props.sunrise.getHours())
+            ) {
+              return 'white';
+            }
+            return 'black';
+          })(),
         }}
       >
         <Typography sx={{ lineHeight: 0 }}>
@@ -53,7 +61,11 @@ const TimeMarkers = (props: TimeMarkersProps) => {
           height: '100%',
         }}
       >
-        <Component sunset={props.sunset} sunrise={props.sunrise} />
+        <Component
+          isLoggedIn={false}
+          sunset={props.sunset}
+          sunrise={props.sunrise}
+        />
       </Box>
     );
   }
@@ -67,6 +79,7 @@ const TimeMarkers = (props: TimeMarkersProps) => {
         height: '100%',
         transition: 'opacity 2s ease',
         opacity: props.timeZoneLoaded ? 1 : 0,
+
         backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 25, 0.5) ${
           props.sunsetPercentage - 3
         }%, transparent ${props.sunsetPercentage}%, transparent ${
@@ -74,7 +87,11 @@ const TimeMarkers = (props: TimeMarkersProps) => {
         }%, rgba(0, 0, 25, 0.5) ${props.sunrisePercentage + 3}%)`,
       }}
     >
-      <Component sunset={props.sunset} sunrise={props.sunrise} />
+      <Component
+        isLoggedIn={true}
+        sunset={props.sunset}
+        sunrise={props.sunrise}
+      />
     </Box>
   );
 };

@@ -14,11 +14,11 @@ interface BoulderShinesIACStackProps extends cdk.StackProps {
     AWS_ALB_LISTENER_ARN: string;
   };
   fe_svc_env: {
-    OPENWEATHERMAP_API_KEY: string;
+    GOOGLEMAPS_APIKEY: string;
     NODE_ENV: 'production';
   };
   be_svc_env: {
-    GOOGLEMAPS_APIKEY: string;
+    OPENWEATHERMAP_API_KEY: string;
     NODE_ENV: 'production';
   };
 }
@@ -124,7 +124,7 @@ export class BoulderShinesIACStack extends cdk.Stack {
         }),
         healthCheck: {
           path: '/healthcheck',
-          unhealthyThresholdCount: 2,
+          unhealthyThresholdCount: 3,
           healthyHttpCodes: '200',
           healthyThresholdCount: 5,
           interval: cdk.Duration.seconds(30),
