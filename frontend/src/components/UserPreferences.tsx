@@ -133,7 +133,7 @@ const UserPreferences = (props: UserPreferencesProps) => {
 
               const sanitizedStateName = states.sanitizeStateName(values.state);
 
-              if (values.state.length > 0) {
+              if (values.state?.length > 0) {
                 if (
                   sanitizedStateCode === null &&
                   sanitizedStateName === null
