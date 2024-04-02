@@ -45,14 +45,21 @@ const getTimeZoneFromLatLng = async (lat: string, lng: string) => {
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const city = req.query.city as string;
-  const coords = await getLatLngFromCity(city);
+  const userLocation = req.query.city as string;
+  const coords = await getLatLngFromCity(userLocation);
   if (coords) {
     const timeZone = await getTimeZoneFromLatLng(coords.lat, coords.lng);
 
-    console.log(`Time zone for ${city}: ${timeZone}`);
+    console.log(`Time zone for ${userLocation}: ${timeZone}`);
+
+    res.setHeader(
+      'Set-Cookie',
+      `userLocation=${encodeURIComponent(userLocation)}; Max-Age=3600; Path=/`
+    );
+
     return res.send({ result: timeZone });
   }
+
   return res.send({ error: 'not found' });
 };
 

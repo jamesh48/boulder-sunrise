@@ -16,12 +16,17 @@ import {
   useCurrentPlacements,
   useCurrentWindowPercentages,
 } from '@/app/customHooks';
-import { MoonIcon, SunIcon, PartlyCloudyIcon, MoonCloudsIcon } from './icons';
-import MoonRainIcon from './icons/MoonRain';
+import {
+  MoonIcon,
+  SunIcon,
+  PartlyCloudyIcon,
+  MoonCloudsIcon,
+  DayRainIcon,
+  MoonRainIcon,
+  HazeIcon,
+} from './icons';
 
 interface SunDialProps {
-  location: string;
-  dataView: boolean;
   weatherReport: WeatherReport | undefined;
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
   timeZone: string;
@@ -95,7 +100,6 @@ const SunDial = (props: SunDialProps) => {
     sunriseLinePlacement,
     sunsetLinePlacement,
     props.weatherReport,
-    props.dataView,
     props.dataContainerRef,
     isMoonTime,
   ]);
@@ -104,6 +108,7 @@ const SunDial = (props: SunDialProps) => {
     sunriseLinePlacement,
     sunsetLinePlacement
   );
+  // alert(props.weatherReport?.weather[0].main);
   return (
     <Box
       sx={{
@@ -167,7 +172,9 @@ const SunDial = (props: SunDialProps) => {
         }}
       >
         <CustomTooltip
-          title={new Date().toLocaleTimeString()}
+          title={new Date().toLocaleTimeString(undefined, {
+            timeZone: props.timeZone,
+          })}
           open={true}
           placement="right"
           ismoontime={isMoonTime}
@@ -181,8 +188,12 @@ const SunDial = (props: SunDialProps) => {
               ) : (
                 <MoonIcon />
               )
+            ) : props.weatherReport?.weather[0].main === 'Haze' ? (
+              <HazeIcon />
             ) : props.weatherReport?.weather[0].main === 'Clouds' ? (
               <PartlyCloudyIcon />
+            ) : props.weatherReport?.weather[0].main === 'Rain' ? (
+              <DayRainIcon />
             ) : (
               <SunIcon />
             )}

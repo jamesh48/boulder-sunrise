@@ -1,23 +1,24 @@
+import { getDataView, toggleDataView } from '@/app/appSlice';
 import { WeatherReport } from '@/app/services/types';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import { Box, Collapse, IconButton, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface DataViewProps {
-  dataView: boolean;
-  handleDataView: (flag: boolean) => void;
   weatherReport: WeatherReport | undefined;
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
 
 const DataView = (props: DataViewProps) => {
   const theme = useTheme();
-
+  const dispatch = useDispatch();
+  const dataView = useSelector(getDataView);
   return (
     <Box
       sx={{
         display: 'flex',
-        flex: props.dataView ? 0.25 : 0,
+        flex: dataView ? 0.25 : 0,
         alignItems: 'center',
         height: '100%',
         justifyContent: 'center',
@@ -27,7 +28,7 @@ const DataView = (props: DataViewProps) => {
       ref={props.dataContainerRef}
     >
       <Collapse
-        in={props.dataView}
+        in={dataView}
         orientation="horizontal"
         sx={{
           flex: 1,
@@ -35,7 +36,7 @@ const DataView = (props: DataViewProps) => {
           alignItems: 'center',
           justifyContent: 'center',
           height: '90%',
-          paddingX: props.dataView ? '.5rem' : 0,
+          paddingX: dataView ? '.5rem' : 0,
         }}
       >
         <Box
@@ -105,10 +106,10 @@ const DataView = (props: DataViewProps) => {
             cursor: 'pointer',
           }}
           onClick={() => {
-            props.handleDataView(!props.dataView);
+            dispatch(toggleDataView());
           }}
         >
-          {props.dataView ? (
+          {dataView ? (
             <ExpandLessTwoTone sx={{ transform: 'rotate(-90deg)' }} />
           ) : (
             <ExpandMoreTwoTone sx={{ transform: 'rotate(-90deg)' }} />

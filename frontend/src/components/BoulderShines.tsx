@@ -1,6 +1,6 @@
 import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import SunDial from './SunDial';
 import {
   useGetCurrentTimeZoneQuery,
@@ -8,43 +8,25 @@ import {
 } from '@/app/services/weatherApiSlice';
 import DataView from './DataView';
 import UserPreferences from './UserPreferences';
+import { useSelector } from 'react-redux';
+import { getUserLocation } from '@/app/appSlice';
 
 const BoulderShines = () => {
-  const [location, setLocation] = useState('Boulder,CO,USA');
+  const userLocation = useSelector(getUserLocation);
+  const isLoggedIn = Boolean(userLocation);
+  const { data: timeZone } = useGetCurrentTimeZoneQuery(
+    { city: userLocation },
+    { skip: !isLoggedIn }
+  );
 
-  const { data: timeZone } = useGetCurrentTimeZoneQuery({ city: location });
+  const { data: weatherReport } = useGetCurrentWeatherQuery(
+    {
+      location: userLocation,
+    },
+    { skip: !isLoggedIn }
+  );
 
-  const { data: weatherReport } = useGetCurrentWeatherQuery({
-    location: location,
-  });
-
-  const [dataView, setDataView] = useState(false);
-  const [userView, setUserView] = useState(false);
   const dataContainerRef = useRef<HTMLDivElement>();
-
-  const handleDataView = (flag: boolean) => {
-    setDataView(flag);
-  };
-
-  const handleSetLocation = (str: string) => {
-    setLocation(str);
-  };
-
-  const handleUserView = (flag: boolean) => {
-    setUserView(flag);
-  };
-
-  useEffect(() => {
-    if (userView) {
-      setDataView(false);
-    }
-  }, [userView]);
-
-  useEffect(() => {
-    if (dataView) {
-      setUserView(false);
-    }
-  }, [dataView]);
 
   const theme = createTheme({
     palette: {
@@ -73,23 +55,19 @@ const BoulderShines = () => {
         }}
       >
         <DataView
-          dataView={dataView}
-          handleDataView={handleDataView}
           weatherReport={weatherReport}
           dataContainerRef={dataContainerRef}
         />
-        <SunDial
-          dataView={dataView}
-          weatherReport={weatherReport}
-          dataContainerRef={dataContainerRef}
-          location={location}
-          timeZone={timeZone?.result || 'America/Denver'}
-        />
-        <UserPreferences
-          userView={userView}
-          handleUserView={handleUserView}
-          handleSetLocation={handleSetLocation}
-        />
+        {isLoggedIn && timeZone?.result ? (
+          // <Suspense fallback={<div>Loading...</div>}>
+          <SunDial
+            weatherReport={weatherReport}
+            dataContainerRef={dataContainerRef}
+            timeZone={timeZone.result || 'America/Denver'}
+          />
+        ) : // </Suspense>
+        null}
+        <UserPreferences />
       </Box>
     </ThemeProvider>
   );

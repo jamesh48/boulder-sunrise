@@ -5,26 +5,34 @@ import {
   Typography,
   IconButton,
   OutlinedInput,
+  TextField,
 } from '@mui/material';
+import states from 'us-state-codes';
+import { Formik, Form } from 'formik';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getUserLocation,
+  getUserView,
+  setUserLocation,
+  toggleUserView,
+} from '@/app/appSlice';
 
-interface UserPreferencesProps {
-  userView: boolean;
-  handleUserView: (flag: boolean) => void;
-  handleSetLocation: (str: string) => void;
-}
+interface UserPreferencesProps {}
 
 const UserPreferences = (props: UserPreferencesProps) => {
+  const dispatch = useDispatch();
   const theme = useTheme();
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+  const [validState, setValidState] = useState('');
+  const userView = useSelector(getUserView);
+  const [defaultCity, defaultState] = useSelector(getUserLocation).split(',');
 
   return (
     <Box
       sx={{
         display: 'flex',
-        flex: props.userView ? 0.25 : 0,
+        flex: userView ? 0.25 : 0,
         alignItems: 'center',
         height: '100%',
         justifyContent: 'center',
@@ -49,10 +57,10 @@ const UserPreferences = (props: UserPreferencesProps) => {
             cursor: 'pointer',
           }}
           onClick={() => {
-            props.handleUserView(!props.userView);
+            dispatch(toggleUserView());
           }}
         >
-          {props.userView ? (
+          {userView ? (
             <ExpandMoreTwoTone sx={{ transform: 'rotate(-90deg)' }} />
           ) : (
             <ExpandLessTwoTone sx={{ transform: 'rotate(-90deg)' }} />
@@ -60,7 +68,7 @@ const UserPreferences = (props: UserPreferencesProps) => {
         </IconButton>
       </Box>
       <Collapse
-        in={props.userView}
+        in={userView}
         orientation="horizontal"
         sx={{
           flex: 1,
@@ -68,7 +76,7 @@ const UserPreferences = (props: UserPreferencesProps) => {
           alignItems: 'center',
           justifyContent: 'center',
           height: '90%',
-          paddingX: props.userView ? '.5rem' : 0,
+          paddingX: userView ? '.5rem' : 0,
         }}
       >
         <Box
@@ -97,53 +105,129 @@ const UserPreferences = (props: UserPreferencesProps) => {
         <Box
           sx={{
             display: 'flex',
-            border: '1px solid black',
             flexDirection: 'column',
           }}
         >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              props.handleSetLocation(`${city},${state},USA`);
-              setCity('');
-              setState('');
+          <Formik
+            onSubmit={(values, helpers) => {
+              const stateToSubmit = (() => {
+                if (values.state.length === 2) {
+                  return values.state.toUpperCase();
+                }
+                return states.getStateCodeByStateName(values.state);
+              })();
+              dispatch(setUserLocation(`${values.city},${stateToSubmit},USA`));
+            }}
+            initialValues={{ city: defaultCity, state: defaultState }}
+            validate={async (values) => {
+              const errors = {} as {
+                state: string;
+                city: string;
+              };
+
+              if (!values.city) {
+                errors.city = 'Required';
+              }
+
+              const sanitizedStateCode = states.sanitizeStateCode(values.state);
+
+              const sanitizedStateName = states.sanitizeStateName(values.state);
+
+              if (values.state.length > 0) {
+                if (
+                  sanitizedStateCode === null &&
+                  sanitizedStateName === null
+                ) {
+                  errors.state = 'Invalid';
+                }
+              } else {
+                errors.state = 'Required';
+              }
+
+              if (Object.keys(errors).length) {
+                return errors;
+              }
+
+              setValidState(
+                states.getStateNameByStateCode(sanitizedStateCode) ||
+                  states.getStateCodeByStateName(sanitizedStateName)
+              );
+              return {};
             }}
           >
-            <OutlinedInput
-              type="text"
-              value={city}
-              placeholder="City"
-              fullWidth
-              inputProps={{
-                sx: {
-                  textAlign: 'center',
-                },
-              }}
-              onChange={(e) => {
-                setCity(e.target.value);
-              }}
-            />
-            <OutlinedInput
-              type="text"
-              value={state}
-              placeholder="State Abbr"
-              fullWidth
-              inputProps={{
-                maxLength: 2,
-                sx: {
-                  textAlign: 'center',
-                },
-              }}
-              onChange={(e) => {
-                setState(e.target.value.toUpperCase());
-              }}
-            />
-            <OutlinedInput
-              type="submit"
-              fullWidth
-              inputProps={{ sx: { cursor: 'pointer' } }}
-            />
-          </form>
+            {({ values, handleChange, errors }) => (
+              <Form>
+                <TextField
+                  type="text"
+                  value={values.city}
+                  placeholder="City"
+                  fullWidth
+                  name="city"
+                  sx={{ marginY: '.25rem' }}
+                  inputProps={{
+                    sx: {
+                      textAlign: 'center',
+                    },
+                  }}
+                  onChange={handleChange}
+                />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {errors.city ? (
+                    <Typography sx={{ color: 'red' }}>{errors.city}</Typography>
+                  ) : null}
+                </Box>
+                {values.city && !errors.city ? (
+                  <Box>
+                    <TextField
+                      type="text"
+                      value={values.state}
+                      placeholder="State Abbr"
+                      fullWidth
+                      name="state"
+                      sx={{ marginY: '.25rem' }}
+                      inputProps={{
+                        sx: {
+                          textAlign: 'center',
+                        },
+                      }}
+                      onChange={handleChange}
+                    />
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {errors.state ? (
+                        <Typography sx={{ color: 'red' }}>
+                          {errors.state}
+                        </Typography>
+                      ) : (
+                        <Typography sx={{ color: 'green' }}>
+                          {validState}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                ) : null}
+                {values.state && !errors.state ? (
+                  <OutlinedInput
+                    type="submit"
+                    fullWidth
+                    sx={{ marginY: '.25rem' }}
+                    inputProps={{ sx: { cursor: 'pointer' } }}
+                  />
+                ) : null}
+              </Form>
+            )}
+          </Formik>
         </Box>
       </Collapse>
     </Box>

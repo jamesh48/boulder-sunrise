@@ -2,10 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { WeatherReport } from '../services/types';
 
-export const constructLocalDate = (rawTimestamp: number, timeZone: string) => {
-  const adjustedTimestamp = rawTimestamp * 1000;
+export const constructLocalDate = (
+  rawTimestamp: number,
+  timeZone: string,
+  ind?: boolean
+) => {
+  const adjustedTimestamp = ind ? rawTimestamp : rawTimestamp * 1000;
   const utcDate = new Date(adjustedTimestamp);
   const localDate = new Date(utcDate.toLocaleString(undefined, { timeZone }));
+
   return localDate;
 };
 
@@ -18,12 +23,12 @@ export const useCurrentPlacements = (
   const [sunsetLinePosition, setSunsetLinePosition] = useState<number>();
 
   useEffect(() => {
-    const now = new Date(Date.now());
+    const now = constructLocalDate(Date.now(), timeZone, true);
     const windowHeight = window.innerHeight;
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
     const position = windowHeight - (currentMinutes / 1440) * windowHeight;
     setSunPosition(position);
-  }, [data]);
+  }, [data, timeZone]);
 
   useEffect(() => {
     if (data && data.sys && data.sys.sunrise) {
@@ -53,7 +58,7 @@ export const useCurrentPlacements = (
       const windowHeight = window.innerHeight;
       setSunsetLinePosition(windowHeight - percentageElapsed * windowHeight);
     }
-  }, [data]);
+  }, [data, timeZone]);
 
   return [sunPosition, sunriseLinePosition, sunsetLinePosition];
 };
