@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import App from '../App';
-
+import '../app/globals.css';
 export interface AppProps {
   userLocation: string;
   timeZone: string;

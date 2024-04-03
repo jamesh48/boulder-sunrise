@@ -1,19 +1,29 @@
-import { getDataView, toggleDataView } from '@/app/appSlice';
-import { WeatherReport } from '@/app/services/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTheme } from '@mui/material/styles';
+import { getDataView, getUserLocation, toggleDataView } from '@/app/appSlice';
+import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import { Box, Collapse, IconButton, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import { useDispatch, useSelector } from 'react-redux';
+import { SkeletonIndicators, WeatherIndicators } from './WeatherIndicators';
 
-interface DataViewProps {
-  weatherReport: WeatherReport | undefined;
+interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
 
-const DataView = (props: DataViewProps) => {
+const WeatherView = (props: WeatherViewProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const userLocation = useSelector(getUserLocation);
   const dataView = useSelector(getDataView);
+
+  const {
+    data: weatherReport,
+    isLoading,
+    isFetching,
+  } = useGetCurrentWeatherQuery({
+    location: userLocation,
+  });
+
   return (
     <Box
       sx={{
@@ -60,33 +70,14 @@ const DataView = (props: DataViewProps) => {
               textAlign: 'center',
             }}
           >
-            {props.weatherReport?.name} Weather
+            {weatherReport?.name} Weather
           </Typography>
-          {props.weatherReport && (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="subtitle1">
-                Current Temp: {props.weatherReport.main.temp}°F
-              </Typography>
-              <Typography variant="subtitle1">
-                Low: {props.weatherReport.main.temp_min}°F
-              </Typography>
-              <Typography variant="subtitle1">
-                High: {props.weatherReport.main.temp_max}°F
-              </Typography>
-              <Typography variant="subtitle1">
-                Humidity: {props.weatherReport.main.humidity}%
-              </Typography>
-              <Typography variant="subtitle1">
-                Pressure: {props.weatherReport.main.pressure} hPa
-              </Typography>
-              <Typography variant="subtitle1">
-                Cloudiness: {props.weatherReport.clouds.all}%
-              </Typography>
-              <Typography variant="subtitle1">
-                Wind Speed: {props.weatherReport.wind.speed} m/s
-              </Typography>
-            </Box>
-          )}
+
+          {isLoading || isFetching ? (
+            <SkeletonIndicators />
+          ) : weatherReport ? (
+            <WeatherIndicators weatherReport={weatherReport} />
+          ) : null}
         </Box>
       </Collapse>
       <Box
@@ -120,4 +111,4 @@ const DataView = (props: DataViewProps) => {
   );
 };
 
-export default DataView;
+export default WeatherView;
