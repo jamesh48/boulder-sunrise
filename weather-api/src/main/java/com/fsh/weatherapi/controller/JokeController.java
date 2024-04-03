@@ -1,4 +1,4 @@
-package com.fsh.jokesapi.controller;
+package com.fsh.weatherapi.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

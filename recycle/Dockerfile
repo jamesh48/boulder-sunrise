@@ -1,7 +1,7 @@
 # Stage 1: Build Java (Maven) application
 FROM maven:3.8.4-openjdk-17-slim AS java-builder
 WORKDIR /app
-COPY jokes-api /app
+COPY weather-api /app
 RUN mvn clean install
 
 # Stage 2: Build JavaScript (Node.js) application
@@ -23,7 +23,7 @@ COPY --from=js-builder /usr/local/lib /usr/local/lib
 COPY --from=js-builder /usr/local/include /usr/local/include
 COPY --from=js-builder /usr/local/bin /usr/local/bin
 # Copy built Java application
-COPY --from=java-builder /app/target/jokes-api-0.0.1-SNAPSHOT.jar /app
+COPY --from=java-builder /app/target/weather-api-0.0.1-SNAPSHOT.jar /app
 # Copy built JavaScript application
 COPY --from=js-builder /app/.next /app/.next
 COPY --from=js-builder /app/package.json /app/package.json

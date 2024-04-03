@@ -1,4 +1,4 @@
-package com.fsh.jokesapi;
+package com.fsh.weatherapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,9 +6,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class JokesApiApplication {
+public class WeatherApiApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(JokesApiApplication.class, args);
+    SpringApplication.run(WeatherApiApplication.class, args);
   }
 }

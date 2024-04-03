@@ -1,6 +1,6 @@
-package com.fsh.jokesapi.config;
+package com.fsh.weatherapi.config;
 
-import com.fsh.jokesapi.controller.MyWebSocketHandler;
+import com.fsh.weatherapi.controller.MyWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

@@ -1,4 +1,4 @@
-package com.fsh.jokesapi.controller;
+package com.fsh.weatherapi.controller;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -97,7 +97,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
     // Stop the background task or scheduled job that polls the weather API
   }
 
-  @Scheduled(fixedRate = 10000) // 300,000 milliseconds = 5 minutes
+  @Scheduled(fixedRateString = "${weather.polling.fixedRate}")
   public void scheduledWeatherPolling() {
     if (!sessions.isEmpty()) {
       weatherApiCall();
@@ -125,7 +125,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
       sessions.put(session.getId(), session);
 
       // Handle the valid JSON message
-      System.out.println("New Subscripiton: " + json.get("locationVal"));
+      System.out.println("New Subscription: " + json.get("locationVal"));
     } catch (JSONException e) {
       // If the payload is not valid JSON, throw an exception
       throw new Exception("Invalid JSON format: " + payload);

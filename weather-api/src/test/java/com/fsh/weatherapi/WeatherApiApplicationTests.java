@@ -1,13 +1,11 @@
-package com.fsh.jokesapi;
+package com.fsh.weatherapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JokesApiApplicationTests {
+class WeatherApiApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+  @Test
+  void contextLoads() {}
 }

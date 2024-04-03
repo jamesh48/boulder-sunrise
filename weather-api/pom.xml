@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fsh</groupId>
-	<artifactId>jokes-api</artifactId>
+	<artifactId>weather-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>jokes-api</name>
+	<name>weather-api</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>21</java.version>

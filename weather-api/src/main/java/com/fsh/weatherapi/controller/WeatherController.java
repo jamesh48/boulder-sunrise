@@ -1,4 +1,4 @@
-package com.fsh.jokesapi.controller;
+package com.fsh.weatherapi.controller;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

@@ -1,4 +1,4 @@
-package com.fsh.jokesapi.controller;
+package com.fsh.weatherapi.controller;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,6 @@ public class HealthCheckController {
     JSONObject response = new JSONObject();
     response.put("status", status);
     response.put("message", message);
-
     // Return the JSON response with HTTP status 200 (OK)
     return new ResponseEntity<>(response.toString(), HttpStatus.OK);
   }
