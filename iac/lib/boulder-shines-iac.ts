@@ -89,7 +89,7 @@ export class BoulderShinesIACStack extends cdk.Stack {
       'bsh-container-be',
       {
         portMappings: [{ containerPort: 8080, hostPort: 8080 }],
-        image: ecs.ContainerImage.fromAsset('../jokes-api'),
+        image: ecs.ContainerImage.fromAsset('../weather-api'),
         logging: new ecs.AwsLogDriver({
           streamPrefix: 'bsh-container-be',
           logRetention: logs.RetentionDays.FIVE_DAYS,
