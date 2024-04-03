@@ -125,7 +125,7 @@ public class MyWebSocketHandler extends TextWebSocketHandler {
       sessions.put(session.getId(), session);
 
       // Handle the valid JSON message
-      System.out.println("Received message: " + json);
+      System.out.println("New Subscripiton: " + json.get("locationVal"));
     } catch (JSONException e) {
       // If the payload is not valid JSON, throw an exception
       throw new Exception("Invalid JSON format: " + payload);
