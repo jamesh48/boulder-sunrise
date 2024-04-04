@@ -1,9 +1,9 @@
 import { useRef } from 'react';
-import { Box, ThemeProvider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactScrollWheelHandler from 'react-scroll-wheel-handler';
+import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
-import SunDial from './SunDial/Index';
+import ReactScrollWheelHandler from 'react-scroll-wheel-handler';
+import { SunDial } from './SunDial';
 import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
 import WeatherView from './WeatherView/WeatherView';
 import UserPreferences from './UserPreferences';
@@ -52,7 +52,7 @@ const BoulderShines = () => {
     <ThemeProvider theme={theme}>
       <ReactScrollWheelHandler
         upHandler={(event) => {
-          if (Math.abs(event.deltaX) > 3) {
+          if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
             if (userView) {
               dispatch(toggleUserView());
             } else if (!weatherView) {
@@ -61,7 +61,7 @@ const BoulderShines = () => {
           }
         }}
         downHandler={(event) => {
-          if (Math.abs(event.deltaX) > 3) {
+          if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
             if (weatherView) {
               dispatch(toggleDataView());
             } else if (!userView) {
@@ -83,7 +83,6 @@ const BoulderShines = () => {
             weatherReport={weatherReport}
             dataContainerRef={dataContainerRef}
           />
-
           <UserPreferences />
         </Box>
       </ReactScrollWheelHandler>

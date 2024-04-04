@@ -18,19 +18,23 @@ export const useCurrentPlacements = (
   data: WeatherReport | undefined,
   timeZone: string | undefined
 ) => {
-  const [sunPosition, setSunPosition] = useState<number>();
+  const [windowHeight, setWindowHeight] = useState<number>(0);
+  const [iconPosition, setIconPosition] = useState<number>();
   const [sunriseLinePosition, setSunriseLinePosition] = useState<number>();
   const [sunsetLinePosition, setSunsetLinePosition] = useState<number>();
 
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+  }, []);
   useEffect(() => {
     if (timeZone) {
       const now = constructLocalDate(Date.now(), timeZone, true);
       const windowHeight = window.innerHeight;
       const currentMinutes = now.getHours() * 60 + now.getMinutes();
       const position = windowHeight - (currentMinutes / 1440) * windowHeight;
-      setSunPosition(position);
+      setIconPosition(position);
     }
-  }, [data, timeZone]);
+  }, [data?.timestamp, timeZone]);
 
   useEffect(() => {
     if (data && data.sys && data.sys.sunrise && timeZone) {
@@ -62,5 +66,18 @@ export const useCurrentPlacements = (
     }
   }, [data, timeZone]);
 
-  return [sunPosition, sunriseLinePosition, sunsetLinePosition];
+  const sunrisePercentage = sunriseLinePosition
+    ? (sunriseLinePosition / windowHeight) * 100
+    : 0;
+  const sunsetPercentage = sunsetLinePosition
+    ? (sunsetLinePosition / windowHeight) * 100
+    : 0;
+
+  return {
+    iconPosition,
+    sunriseLinePosition,
+    sunsetLinePosition,
+    sunrisePercentage,
+    sunsetPercentage,
+  };
 };
