@@ -6,11 +6,13 @@ export const appInitialState: {
   nodeEnv: 'development' | 'test' | 'production';
   weatherView: boolean;
   userView: boolean;
+  stateSwitch: boolean;
 } = {
   userLocation: '',
   nodeEnv: 'production',
   weatherView: false,
   userView: false,
+  stateSwitch: false,
 };
 
 export const appSlice = createSlice({
@@ -32,12 +34,20 @@ export const appSlice = createSlice({
         state.weatherView = false;
       }
     },
+    toggleStateSwitch: (state) => {
+      state.stateSwitch = !state.stateSwitch;
+    },
   },
 });
 
-export const { setUserLocation, toggleWeatherView, toggleUserView } =
-  appSlice.actions;
+export const {
+  setUserLocation,
+  toggleWeatherView,
+  toggleUserView,
+  toggleStateSwitch,
+} = appSlice.actions;
 
+export const getStateSwitch = (state: RootState) => state.app.stateSwitch;
 export const getUserLocation = (state: RootState) => state.app.userLocation;
 export const getWeatherView = (state: RootState) => state.app.weatherView;
 export const getUserView = (state: RootState) => state.app.userView;

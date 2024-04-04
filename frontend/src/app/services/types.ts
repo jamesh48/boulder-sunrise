@@ -1,4 +1,4 @@
-export type CurrentWeather = 'Clouds' | 'Clear' | 'Rain' | 'Haze';
+export type CurrentWeather = 'Clouds' | 'Clear' | 'Rain' | 'Haze' | 'Smoke';
 
 export interface WeatherReport {
   visibility: number;

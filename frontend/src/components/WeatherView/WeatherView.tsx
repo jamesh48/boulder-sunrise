@@ -1,13 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
+import { Box, Collapse, IconButton, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   getWeatherView,
   getUserLocation,
   toggleWeatherView,
+  toggleStateSwitch,
 } from '@/app/appSlice';
 import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
-import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
-import { Box, Collapse, IconButton, Typography } from '@mui/material';
 import { SkeletonIndicators, WeatherIndicators } from './WeatherIndicators';
 
 interface WeatherViewProps {
@@ -42,6 +43,7 @@ const WeatherView = (props: WeatherViewProps) => {
       ref={props.dataContainerRef}
     >
       <Collapse
+        onExited={() => dispatch(toggleStateSwitch())}
         in={weatherView}
         orientation="horizontal"
         sx={{

@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import {
   Box,
@@ -7,17 +9,16 @@ import {
   OutlinedInput,
   TextField,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import states from 'us-state-codes';
 import { Formik, Form } from 'formik';
-import { useTheme } from '@mui/material/styles';
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   getUserLocation,
   getUserView,
   setUserLocation,
   toggleWeatherView,
   toggleUserView,
+  toggleStateSwitch,
 } from '@/app/appSlice';
 
 interface UserPreferencesProps {}
@@ -69,6 +70,7 @@ const UserPreferences = (_props: UserPreferencesProps) => {
         </IconButton>
       </Box>
       <Collapse
+        onExited={() => dispatch(toggleStateSwitch())}
         in={userView}
         orientation="horizontal"
         sx={{
@@ -147,14 +149,20 @@ const UserPreferences = (_props: UserPreferencesProps) => {
                 errors.state = 'Required';
               }
 
-              if (Object.keys(errors).length) {
-                return errors;
+              if (Object.keys(errors).length) return errors;
+
+              if (sanitizedStateCode || sanitizedStateName) {
+                const validStateCode = states.getStateNameByStateCode(
+                  sanitizedStateCode || ''
+                );
+                const validStateName = states.getStateCodeByStateName(
+                  sanitizedStateName || ''
+                );
+
+                if (validStateCode) setValidState(validStateCode);
+                if (validStateName) setValidState(validStateName);
               }
 
-              setValidState(
-                states.getStateNameByStateCode(sanitizedStateCode) ||
-                  states.getStateCodeByStateName(sanitizedStateName)
-              );
               return {};
             }}
           >

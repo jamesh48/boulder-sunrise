@@ -3,10 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import ReactScrollWheelHandler from 'react-scroll-wheel-handler';
-import { SunDial } from './SunDial';
-import { WeatherView } from './WeatherView';
+
 import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
-import UserPreferences from './UserPreferences';
 import {
   getWeatherView,
   getUserLocation,
@@ -14,6 +12,10 @@ import {
   toggleWeatherView,
   toggleUserView,
 } from '@/app/appSlice';
+
+import SunDial from './SunDial/SunDial';
+import WeatherView from './WeatherView/WeatherView';
+import UserPreferences from './UserPreferences/UserPreferences';
 
 const BoulderShines = () => {
   const userLocation = useSelector(getUserLocation);

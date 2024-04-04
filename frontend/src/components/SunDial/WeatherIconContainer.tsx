@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import {
   DayRainIcon,
   HazeIcon,
@@ -8,8 +8,10 @@ import {
   PartlyCloudyIcon,
   SunIcon,
 } from '../icons';
-import { CustomTooltip } from '../CustomComponents/CustomTooltip';
 import { CurrentWeather } from '@/app/services/types';
+import HtmlTooltip from '../CustomComponents/HTMLTooltip';
+import { useSelector } from 'react-redux';
+import { getStateSwitch } from '@/app/appSlice';
 
 interface WeatherIconContainerProps {
   timeZone: string | undefined;
@@ -27,6 +29,10 @@ const weatherIconMap = {
     day: <DayRainIcon />,
     night: <MoonRainIcon />,
   },
+  Smoke: {
+    day: <HazeIcon />,
+    night: <HazeIcon />,
+  },
   Haze: {
     day: <HazeIcon />,
     night: <HazeIcon />,
@@ -38,6 +44,9 @@ const weatherIconMap = {
 };
 
 const WeatherIconContainer = (props: WeatherIconContainerProps) => {
+  const theme = useTheme();
+  // state switch to rerender the tooltip when trays open/close
+  useSelector(getStateSwitch);
   const ind = props.isMoonTime ? 'night' : 'day';
 
   return (
@@ -50,16 +59,21 @@ const WeatherIconContainer = (props: WeatherIconContainerProps) => {
         transform: 'translate(-50%)',
       }}
     >
-      <CustomTooltip
-        title={new Date().toLocaleTimeString(undefined, {
+      <HtmlTooltip
+        description={new Date().toLocaleTimeString(undefined, {
           timeZone: props.timeZone,
         })}
+        divOrSpan="div"
         open={!!props.timeZone}
         placement="right"
-        ismoontime={props.isMoonTime}
+        borderColor={props.isMoonTime ? 'white' : 'black'}
+        textColor={props.isMoonTime ? 'white' : 'black'}
+        backgroundColor={
+          props.isMoonTime ? theme.palette.primary.light : 'yellow'
+        }
       >
         <Box>{weatherIconMap[props.currentWeather][ind]}</Box>
-      </CustomTooltip>
+      </HtmlTooltip>
     </Box>
   );
 };
