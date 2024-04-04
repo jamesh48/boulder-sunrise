@@ -4,12 +4,12 @@ import { RootState } from './store';
 export const appInitialState: {
   userLocation: string;
   nodeEnv: 'development' | 'test' | 'production';
-  dataView: boolean;
+  weatherView: boolean;
   userView: boolean;
 } = {
   userLocation: '',
   nodeEnv: 'production',
-  dataView: false,
+  weatherView: false,
   userView: false,
 };
 
@@ -20,26 +20,26 @@ export const appSlice = createSlice({
     setUserLocation: (state, action: PayloadAction<string>) => {
       state.userLocation = action.payload;
     },
-    toggleDataView: (state) => {
-      state.dataView = !state.dataView;
+    toggleWeatherView: (state) => {
+      state.weatherView = !state.weatherView;
       if (state.userView) {
         state.userView = false;
       }
     },
     toggleUserView: (state) => {
       state.userView = !state.userView;
-      if (state.dataView) {
-        state.dataView = false;
+      if (state.weatherView) {
+        state.weatherView = false;
       }
     },
   },
 });
 
-export const { setUserLocation, toggleDataView, toggleUserView } =
+export const { setUserLocation, toggleWeatherView, toggleUserView } =
   appSlice.actions;
 
 export const getUserLocation = (state: RootState) => state.app.userLocation;
-export const getDataView = (state: RootState) => state.app.dataView;
+export const getWeatherView = (state: RootState) => state.app.weatherView;
 export const getUserView = (state: RootState) => state.app.userView;
 
 export default appSlice.reducer;

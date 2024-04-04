@@ -1,6 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
-import { getDataView, getUserLocation, toggleDataView } from '@/app/appSlice';
+import {
+  getWeatherView,
+  getUserLocation,
+  toggleWeatherView,
+} from '@/app/appSlice';
 import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import { Box, Collapse, IconButton, Typography } from '@mui/material';
@@ -14,7 +18,7 @@ const WeatherView = (props: WeatherViewProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const userLocation = useSelector(getUserLocation);
-  const dataView = useSelector(getDataView);
+  const weatherView = useSelector(getWeatherView);
 
   const {
     data: weatherReport,
@@ -28,7 +32,7 @@ const WeatherView = (props: WeatherViewProps) => {
     <Box
       sx={{
         display: 'flex',
-        flex: dataView ? 0.25 : 0,
+        flex: weatherView ? 0.25 : 0,
         alignItems: 'center',
         height: '100%',
         justifyContent: 'center',
@@ -38,7 +42,7 @@ const WeatherView = (props: WeatherViewProps) => {
       ref={props.dataContainerRef}
     >
       <Collapse
-        in={dataView}
+        in={weatherView}
         orientation="horizontal"
         sx={{
           flex: 1,
@@ -46,7 +50,7 @@ const WeatherView = (props: WeatherViewProps) => {
           alignItems: 'center',
           justifyContent: 'center',
           height: '90%',
-          paddingX: dataView ? '.5rem' : 0,
+          paddingX: weatherView ? '.5rem' : 0,
         }}
       >
         <Box
@@ -97,10 +101,10 @@ const WeatherView = (props: WeatherViewProps) => {
             cursor: 'pointer',
           }}
           onClick={() => {
-            dispatch(toggleDataView());
+            dispatch(toggleWeatherView());
           }}
         >
-          {dataView ? (
+          {weatherView ? (
             <ExpandLessTwoTone sx={{ transform: 'rotate(-90deg)' }} />
           ) : (
             <ExpandMoreTwoTone sx={{ transform: 'rotate(-90deg)' }} />

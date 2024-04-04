@@ -12,6 +12,7 @@ import {
 } from '@/app/services/weatherApiSlice';
 import WeatherIconContainer from './WeatherIconContainer';
 import SunriseSunset from './SunriseSunset';
+
 interface SunDialProps {
   isLoggedIn: boolean;
   weatherReport: WeatherReport | undefined;

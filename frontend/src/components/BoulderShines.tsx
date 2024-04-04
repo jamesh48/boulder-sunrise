@@ -4,14 +4,14 @@ import { Box, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import ReactScrollWheelHandler from 'react-scroll-wheel-handler';
 import { SunDial } from './SunDial';
+import { WeatherView } from './WeatherView';
 import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
-import WeatherView from './WeatherView/WeatherView';
 import UserPreferences from './UserPreferences';
 import {
-  getDataView,
+  getWeatherView,
   getUserLocation,
   getUserView,
-  toggleDataView,
+  toggleWeatherView,
   toggleUserView,
 } from '@/app/appSlice';
 
@@ -47,7 +47,7 @@ const BoulderShines = () => {
 
   const dispatch = useDispatch();
   const userView = useSelector(getUserView);
-  const weatherView = useSelector(getDataView);
+  const weatherView = useSelector(getWeatherView);
   return (
     <ThemeProvider theme={theme}>
       <ReactScrollWheelHandler
@@ -56,14 +56,14 @@ const BoulderShines = () => {
             if (userView) {
               dispatch(toggleUserView());
             } else if (!weatherView) {
-              dispatch(toggleDataView());
+              dispatch(toggleWeatherView());
             }
           }
         }}
         downHandler={(event) => {
           if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
             if (weatherView) {
-              dispatch(toggleDataView());
+              dispatch(toggleWeatherView());
             } else if (!userView) {
               dispatch(toggleUserView());
             }

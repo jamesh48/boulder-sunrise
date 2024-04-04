@@ -10,7 +10,7 @@ const App = (props: AppProps) => {
       nodeEnv: props.nodeEnv,
       userLocation: props.userLocation,
       userView: !Boolean(props.userLocation),
-      dataView: Boolean(props.userLocation),
+      weatherView: Boolean(props.userLocation),
     },
   });
 

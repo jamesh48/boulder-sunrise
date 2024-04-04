@@ -16,7 +16,7 @@ import {
   getUserLocation,
   getUserView,
   setUserLocation,
-  toggleDataView,
+  toggleWeatherView,
   toggleUserView,
 } from '@/app/appSlice';
 
@@ -119,7 +119,7 @@ const UserPreferences = (_props: UserPreferencesProps) => {
               })();
               dispatch(setUserLocation(`${values.city},${stateToSubmit},USA`));
               // Opening Data View closes user view- two birds one stone
-              dispatch(toggleDataView());
+              dispatch(toggleWeatherView());
             }}
             initialValues={{ city: defaultCity, state: defaultState }}
             validate={async (values) => {
