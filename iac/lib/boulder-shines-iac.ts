@@ -168,7 +168,6 @@ export class BoulderShinesIACStack extends cdk.Stack {
       conditions: [
         elbv2.ListenerCondition.hostHeaders(['data.bertramcappuccino.com']),
         elbv2.ListenerCondition.pathPatterns([
-          '/joke',
           '/websocket-endpoint',
           '/healthcheck',
           '/bss-weather',

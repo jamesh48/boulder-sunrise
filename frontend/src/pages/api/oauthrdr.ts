@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
+import fetch from 'node-fetch';
 const { MEETUP_CLIENT_KEY, MEETUP_CLIENT_SECRET } = process.env;
 
 const MEETUP_CLIENT_RDR_URL = 'www.bertramcappuccino.com/api/oauthrdr';
