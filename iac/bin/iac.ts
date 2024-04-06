@@ -17,6 +17,8 @@ const {
   CDK_DEFAULT_ACCOUNT,
   CDK_DEFAULT_REGION,
   GOOGLEMAPS_APIKEY,
+  MEETUP_CLIENT_KEY,
+  MEETUP_CLIENT_SECRET,
   OPENWEATHERMAP_API_KEY,
 } = process.env;
 
@@ -48,6 +50,14 @@ if (!GOOGLEMAPS_APIKEY) {
   throw new Error('GOOGLEMAPS_APIKEY env is not defined!');
 }
 
+if (!MEETUP_CLIENT_KEY) {
+  throw new Error('MEETUP_CLIENT_KEY env is not defined');
+}
+
+if (!MEETUP_CLIENT_SECRET) {
+  throw new Error('MEETUP_CLIENT_SECRET env is not defined');
+}
+
 if (!OPENWEATHERMAP_API_KEY) {
   throw new Error('OPENWEATHERMAP_API_KEY env is not defined!');
 }
@@ -66,6 +76,8 @@ new BoulderShinesIACStack(app, 'bsh-stack', {
   fe_svc_env: {
     GOOGLEMAPS_APIKEY,
     NODE_ENV: 'production',
+    MEETUP_CLIENT_KEY,
+    MEETUP_CLIENT_SECRET,
   },
   be_svc_env: {
     OPENWEATHERMAP_API_KEY,

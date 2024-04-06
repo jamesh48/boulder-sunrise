@@ -16,6 +16,8 @@ interface BoulderShinesIACStackProps extends cdk.StackProps {
   fe_svc_env: {
     GOOGLEMAPS_APIKEY: string;
     NODE_ENV: 'production';
+    MEETUP_CLIENT_SECRET: string;
+    MEETUP_CLIENT_KEY: string;
   };
   be_svc_env: {
     OPENWEATHERMAP_API_KEY: string;
@@ -170,6 +172,7 @@ export class BoulderShinesIACStack extends cdk.Stack {
           '/websocket-endpoint',
           '/healthcheck',
           '/bss-weather',
+          '/meetups',
         ]),
       ],
     });

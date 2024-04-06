@@ -54,7 +54,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.setHeader(
       'Set-Cookie',
-      `userLocation=${encodeURIComponent(userLocation)}; Max-Age=3600; Path=/`
+      `userLocation=${encodeURIComponent(userLocation)}; Max-Age=604800; Path=/`
     );
 
     return res.send({ result: timeZone });

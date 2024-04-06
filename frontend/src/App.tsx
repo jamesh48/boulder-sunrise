@@ -3,6 +3,16 @@ import { Provider } from 'react-redux';
 import GlobalStore from './app/store';
 import BoulderShines from './components/BoulderShines';
 import { AppProps } from './pages';
+import { Box } from '@mui/material';
+import { useEffect } from 'react';
+
+const MeetupOAuthProvider = (props: { children: JSX.Element }) => {
+  useEffect(() => {
+    window.open('/api/oauth');
+  }, []);
+
+  return props.children;
+};
 
 const App = (props: AppProps) => {
   GlobalStore.prototype.configureGlobalStore({
@@ -16,7 +26,9 @@ const App = (props: AppProps) => {
 
   return (
     <Provider store={GlobalStore.prototype.getStore()}>
-      <BoulderShines />
+      <MeetupOAuthProvider>
+        <BoulderShines />
+      </MeetupOAuthProvider>
     </Provider>
   );
 };

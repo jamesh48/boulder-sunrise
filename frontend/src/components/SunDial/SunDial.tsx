@@ -26,7 +26,11 @@ const SunDial = (props: SunDialProps) => {
   const { data: weatherReport } = useGetCurrentWeatherQuery({
     location: userLocation,
   });
-  const { data: timeZone } = useGetCurrentTimeZoneQuery({ city: userLocation });
+  const isLoggedIn = Boolean(userLocation);
+  const { data: timeZone } = useGetCurrentTimeZoneQuery(
+    { city: userLocation },
+    { skip: !isLoggedIn }
+  );
 
   const sunsetLineRef = useRef<HTMLHRElement>(null);
   const sunriseLineRef = useRef<HTMLHRElement>(null);

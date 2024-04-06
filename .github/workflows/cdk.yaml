@@ -54,5 +54,7 @@ jobs:
           AWS_VPC_ID: ${{ vars.AWS_VPC_ID }}
           CDK_DEFAULT_REGION: ${{ vars.CDK_DEFAULT_REGION }}
           CDK_DEFAULT_ACCOUNT: ${{ vars.CDK_DEFAULT_ACCOUNT }}
-          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
           GOOGLEMAPS_APIKEY: ${{ secrets.GOOGLEMAPS_APIKEY }}
+          MEETUP_CLIENT_KEY: ${{ secrets.MEETUP_CLIENT_KEY }}
+          MEETUP_CLIENT_SECRET: ${{ secrets.MEETUP_CLIENT_SECRET }}
+          OPENWEATHERMAP_API_KEY: ${{ secrets.OPENWEATHERMAP_API_KEY }}
