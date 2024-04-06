@@ -1,33 +1,39 @@
 package com.fsh.weatherapi.controller;
 
 import com.fsh.weatherapi.graphql.GraphQLService;
-import com.fsh.weatherapi.graphql.MyRequestObject;
+import com.fsh.weatherapi.graphql.KeywordSearchResponse;
 import io.aexp.nodes.graphql.GraphQLResponseEntity;
 import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 // import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class GraphQLController {
 
-  // Star Wars Movie Api
   private static final String GRAPHQL_URL =
-    "https://swapi-graphql.netlify.app/.netlify/functions/index";
+    "https://api.meetup.com/gql";
 
   @GetMapping("/meetups")
-  public ResponseEntity<?> invokeGraphQLService() {
+  public ResponseEntity<?> invokeGraphQLService(         @RequestParam("lat") Double latitude,
+  @RequestParam("lon") Double longitude,
+  @RequestParam("lon") String query
+  ) {
     try {
       // Call the GraphQL service
-      GraphQLResponseEntity<MyRequestObject> responseEntity = GraphQLService.callGraphQLService(
-        GRAPHQL_URL
+      GraphQLResponseEntity<KeywordSearchResponse> responseEntity = GraphQLService.callGraphQLService(
+        GRAPHQL_URL,
+        latitude,
+        longitude,
+        query
       );
 
       // Handle response
       // if (responseEntity.isOk()) {
-      MyRequestObject data = responseEntity.getResponse();
+      KeywordSearchResponse data = responseEntity.getResponse();
       // Process data...
       return ResponseEntity.ok(data); // Return data as response
       // } else {

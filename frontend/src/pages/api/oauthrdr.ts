@@ -29,7 +29,8 @@ async function requestAccessToken(
     });
 
     if (!response.ok) {
-      console.log(response.body);
+      const test = await response.json();
+      console.log(test);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -53,8 +54,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const accessToken = await requestAccessToken(
     MEETUP_CLIENT_KEY,
     MEETUP_CLIENT_SECRET,
-    code,
-    MEETUP_CLIENT_RDR_URL
+    MEETUP_CLIENT_RDR_URL,
+    code
   );
   console.log(accessToken);
   return res.send({ message: 'OK' });

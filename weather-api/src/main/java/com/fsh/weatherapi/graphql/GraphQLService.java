@@ -3,22 +3,63 @@ package com.fsh.weatherapi.graphql;
 import io.aexp.nodes.graphql.GraphQLRequestEntity;
 import io.aexp.nodes.graphql.GraphQLResponseEntity;
 import io.aexp.nodes.graphql.GraphQLTemplate;
+import io.aexp.nodes.graphql.InputObject;
+import io.aexp.nodes.graphql.Variable;
+
 import java.io.IOException;
 
+
+enum SearchSources {
+  EVENTS,
+  Groups
+};
+
 public class GraphQLService {
+  public static String query = "query($filter: SearchConnectionFilter!) {\n" +
+               "  keywordSearch(filter: $filter) {\n" +
+               "    count\n" +
+               "    edges {\n" +
+               "      cursor\n" +
+               "      node {\n" +
+               "        id\n" +
+               "        result {\n" +
+               "          ... on Event {\n" +
+               "            title\n" +
+               "            howToFindUs\n" +
+               "            eventUrl\n" +
+               "            description\n" +
+               "            dateTime\n" +
+               "            going\n" +
+               "            timezone\n" +
+               "            imageUrl\n" +
+               "            image {\n" +
+               "              baseUrl\n" +
+               "            }\n" +
+               "          }\n" +
+               "        }\n" +
+               "      }\n" +
+               "    }\n" +
+               "  }\n" +
+               "}";
 
-  public static GraphQLResponseEntity<MyRequestObject> callGraphQLService(
-    String url
-    // String query
-  ) throws IOException {
-    GraphQLTemplate graphQLTemplate = new GraphQLTemplate();
+    public static GraphQLResponseEntity<KeywordSearchResponse>
+    callGraphQLService(String url, Double lat, Double lon, String query) throws IOException {
+        GraphQLTemplate graphQLTemplate = new GraphQLTemplate();
 
-    GraphQLRequestEntity requestEntity = GraphQLRequestEntity
-      .Builder()
-      .url(url)
-      .request(MyRequestObject.class)
-      .build();
+        SearchSources events = SearchSources.EVENTS;
+        InputObject<Object> meetupInput = new InputObject.Builder<Object>()
+          .put("lat", lat)
+          .put("lon", lon)
+          .put("source", events)
+          .put("query", query)
+          .build();
 
-    return graphQLTemplate.query(requestEntity, MyRequestObject.class);
-  }
+        GraphQLRequestEntity requestEntity = GraphQLRequestEntity.Builder()
+            .url(url)
+            .request(query)
+            .variables(new Variable<Object>("filter", meetupInput.getMap()))
+            .build();
+
+        return graphQLTemplate.query(requestEntity, KeywordSearchResponse.class);
+    }
 }
