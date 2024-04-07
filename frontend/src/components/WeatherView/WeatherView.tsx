@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import { Box, Collapse, IconButton, Typography, Chip } from '@mui/material';
@@ -18,9 +20,7 @@ import {
   LocalEvent as LocalEventProps,
   useGetCurrentMeetupsQuery,
 } from '@/app/services/meetupApiSlice';
-import Image from 'next/image';
 import HtmlTooltip from '../CustomComponents/HTMLTooltip';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import useIsMobile from '@/app/customHooks/useIsMobile';
 
 interface LocalEventDescriptionProps {
@@ -126,6 +126,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
   const [open, setOpen] = useState(false);
   const scrollComponent = useRef<HTMLElement>();
   const scrollXComponent = useRef<HTMLElement>();
+  const activeEventRef = useRef<HTMLDivElement>();
 
   const isMobile = useIsMobile();
 
@@ -211,9 +212,19 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
           border: '1px solid black',
           marginY: '1rem',
         }}
+        ref={activeEventRef}
         onClick={() => {
           if (isMobile) {
             props.handleMobileIndex(props.mobileIndex);
+            // Reset Scroll Position of Active Element after another one Closes
+            setTimeout(() => {
+              if (activeEventRef.current) {
+                activeEventRef.current.scrollIntoView({
+                  behavior: 'instant',
+                  block: 'start',
+                });
+              }
+            }, 0);
           } else {
             window.open(props.eventUrl);
           }
@@ -244,7 +255,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             layout="responsive"
           />
         </Box>
-        <Collapse in={props.mobileOpen}>
+        {props.mobileOpen ? (
           <LocalEventDescription
             formattedDateRange={formattedDateRange}
             venue={props.venue}
@@ -253,7 +264,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             scrollComponent={scrollComponent}
             scrollXComponent={scrollXComponent}
           />
-        </Collapse>
+        ) : null}
       </Box>
     </HtmlTooltip>
   );
