@@ -1,58 +1,208 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
-import { Box, Collapse, IconButton, Typography } from '@mui/material';
+import { Box, Collapse, IconButton, Typography, Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   getWeatherView,
   getUserLocation,
   toggleWeatherView,
   toggleStateSwitch,
+  accuateDisabledTraySwipe,
 } from '@/app/appSlice';
 import {
   useGetCurrentTimeZoneQuery,
   useGetCurrentWeatherQuery,
 } from '@/app/services/weatherApiSlice';
 import { SkeletonIndicators, WeatherIndicators } from './WeatherIndicators';
-import { useGetCurrentMeetupsQuery } from '@/app/services/meetupApiSlice';
+import {
+  LocalEvent as LocalEventProps,
+  useGetCurrentMeetupsQuery,
+} from '@/app/services/meetupApiSlice';
 import Image from 'next/image';
+import HtmlTooltip from '../CustomComponents/HTMLTooltip';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
 
-interface LocalEventProps {
-  title: string;
-  imageUrl: string;
-  eventUrl: string;
+interface LocalEventPropsWithRef extends LocalEventProps {
+  outerScrollComponent: React.MutableRefObject<HTMLDivElement | undefined>;
 }
-const LocalEvent = (props: LocalEventProps) => {
+
+const LocalEvent = (props: LocalEventPropsWithRef) => {
+  const theme = useTheme();
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const scrollComponent = useRef<HTMLElement>();
+  const scrollXComponent = useRef<HTMLElement>();
+
+  const handleToolTipScroll = useCallback((e: WheelEvent) => {
+    scrollComponent.current?.scrollTo({
+      top: scrollComponent.current?.scrollTop + e.deltaY,
+      behavior: 'auto',
+    });
+
+    scrollXComponent.current?.scrollTo({
+      left: scrollXComponent.current?.scrollLeft + e.deltaX,
+      behavior: 'auto',
+    });
+  }, []);
+
+  useEffect(() => {
+    dispatch(accuateDisabledTraySwipe(open));
+  }, [open, dispatch]);
+
+  useEffect(() => {
+    if (props.outerScrollComponent?.current) {
+      const cachedMouseWheelHandler =
+        props.outerScrollComponent.current.onwheel;
+
+      if (open) {
+        props.outerScrollComponent.current.onwheel = (e) => {
+          e.preventDefault();
+        };
+        window.addEventListener('wheel', handleToolTipScroll, true);
+      }
+      return () => {
+        window.removeEventListener('wheel', handleToolTipScroll, true);
+        if (props.outerScrollComponent.current) {
+          props.outerScrollComponent.current.onwheel = cachedMouseWheelHandler;
+        }
+      };
+    }
+  }, [open, handleToolTipScroll, props.outerScrollComponent]);
+
+  const startDateTime = new Date(new Date(props.dateTime));
+
+  const endDateTime = new Date(props.endTime);
+
+  const formattedDateRange = `${startDateTime.toLocaleDateString(
+    'en-US'
+  )} ${startDateTime.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })} - ${endDateTime.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })}`;
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        cursor: 'pointer',
-        borderRadius: '1rem',
-        border: '1px solid black',
-        marginY: '1rem',
-      }}
-      onClick={() => window.open(props.eventUrl)}
+    <HtmlTooltip
+      placement="right"
+      open={open}
+      description={
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            padding: '1rem',
+          }}
+        >
+          <Typography
+            className="Venue"
+            variant="h5"
+            sx={{
+              textDecoration: 'underline',
+              padding: '.5rem',
+              paddingBottom: 0,
+            }}
+          >
+            Venue: {props.venue?.name || props.venue?.address || 'See Event'}
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flex: 1,
+              alignItems: 'center',
+              paddingY: '.5rem',
+            }}
+          >
+            <Typography>{formattedDateRange}</Typography>
+          </Box>
+          <Box
+            sx={{
+              maxHeight: '15rem',
+              overflowY: 'auto',
+              border: '1px solid white',
+              borderRadius: '5px',
+            }}
+            ref={scrollComponent}
+          >
+            <Typography sx={{ padding: '.25rem' }}>
+              {props.description || 'No Description Provided'}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              paddingTop: '1rem',
+              overflowX: 'auto',
+              '&::-webkit-scrollbar': {
+                display: 'none',
+              },
+              '-ms-overflow-style': 'none',
+              'scrollbar-width': 'none',
+            }}
+            ref={scrollXComponent}
+          >
+            {props.topics.edges.map((edge, idx) => (
+              <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
+                <Chip
+                  label={edge.node.name}
+                  variant="filled"
+                  color="success"
+                  sx={{ flex: 1, marginX: '.15rem' }}
+                />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      }
+      divOrSpan="div"
+      opacity={1}
+      backgroundColor={theme.palette.primary.main}
+      textColor="white"
     >
-      <Typography variant="h5" sx={{ marginTop: '.5rem', textAlign: 'center' }}>
-        {props.title}
-      </Typography>
-      <Box sx={{ margin: '.5rem' }}>
-        <Image
-          src={props.imageUrl}
-          width={100}
-          height={100}
-          alt={props.title}
-          layout="responsive"
-        />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          cursor: 'pointer',
+          borderRadius: '1rem',
+          border: '1px solid black',
+          marginY: '1rem',
+        }}
+        onClick={() => window.open(props.eventUrl)}
+        onMouseOver={() => setOpen(true)}
+        onMouseOut={() => setOpen(false)}
+      >
+        <Typography
+          variant="h5"
+          sx={{ marginTop: '.5rem', textAlign: 'center' }}
+        >
+          {props.title}
+        </Typography>
+        <Box sx={{ margin: '.5rem' }}>
+          <Image
+            src={props.imageUrl}
+            width={100}
+            height={100}
+            alt={props.title}
+            layout="responsive"
+          />
+        </Box>
       </Box>
-    </Box>
+    </HtmlTooltip>
   );
 };
 
@@ -65,6 +215,8 @@ const WeatherView = (props: WeatherViewProps) => {
   const { data: locationData } = useGetCurrentTimeZoneQuery({
     city: userLocation,
   });
+
+  const outerScrollComponent = useRef<HTMLDivElement>();
 
   const { data: meetups } = useGetCurrentMeetupsQuery(
     {
@@ -168,6 +320,7 @@ const WeatherView = (props: WeatherViewProps) => {
             {weatherReport?.name} Local Events
           </Typography>
           <Box
+            ref={outerScrollComponent}
             sx={{
               overflowY: 'scroll',
               maxHeight: '60rem',
@@ -176,9 +329,8 @@ const WeatherView = (props: WeatherViewProps) => {
             {meetups?.edges?.map(({ node: { result } }, idx) => (
               <LocalEvent
                 key={idx}
-                title={result.title}
-                imageUrl={result.imageUrl}
-                eventUrl={result.eventUrl}
+                {...result}
+                outerScrollComponent={outerScrollComponent}
               />
             ))}
           </Box>

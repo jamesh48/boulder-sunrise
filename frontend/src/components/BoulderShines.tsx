@@ -11,6 +11,7 @@ import {
   getUserView,
   toggleWeatherView,
   toggleUserView,
+  getDisabledTraySwipe,
 } from '@/app/appSlice';
 
 import SunDial from './SunDial/SunDial';
@@ -50,24 +51,30 @@ const BoulderShines = () => {
   const dispatch = useDispatch();
   const userView = useSelector(getUserView);
   const weatherView = useSelector(getWeatherView);
+  const disabledTraySwipe = useSelector(getDisabledTraySwipe);
+
   return (
     <ThemeProvider theme={theme}>
       <ReactScrollWheelHandler
         upHandler={(event) => {
-          if (event && Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
-            if (userView) {
-              dispatch(toggleUserView());
-            } else if (!weatherView) {
-              dispatch(toggleWeatherView());
+          if (!disabledTraySwipe) {
+            if (event && Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
+              if (userView) {
+                dispatch(toggleUserView());
+              } else if (!weatherView) {
+                dispatch(toggleWeatherView());
+              }
             }
           }
         }}
         downHandler={(event) => {
-          if (event && Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
-            if (weatherView) {
-              dispatch(toggleWeatherView());
-            } else if (!userView) {
-              dispatch(toggleUserView());
+          if (!disabledTraySwipe) {
+            if (event && Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
+              if (weatherView) {
+                dispatch(toggleWeatherView());
+              } else if (!userView) {
+                dispatch(toggleUserView());
+              }
             }
           }
         }}

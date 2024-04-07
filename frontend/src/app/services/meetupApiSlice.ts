@@ -1,20 +1,33 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+export interface LocalEvent {
+  title: string;
+  imageUrl: string;
+  eventUrl: string;
+  image: { baseUrl: string };
+  going: boolean;
+  howToFindUs: string;
+  description: string;
+  shortDescription: string;
+  dateTime: string;
+  endTime: string;
+  topics: {
+    count: number;
+    edges: { cursor: string; node: { name: string } }[];
+  };
+  venue?: {
+    name: string;
+    address: string;
+  };
+}
+
 interface MeetupResponse {
   count: number;
   edges?: {
     cursor: string;
     node: {
       id: string;
-      result: {
-        title: string;
-        imageUrl: string;
-        eventUrl: string;
-        image: { baseUrl: string };
-        going: boolean;
-        howToFindUs: string;
-        description: string;
-      };
+      result: LocalEvent;
     };
   }[];
 }

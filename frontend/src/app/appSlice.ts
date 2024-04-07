@@ -7,12 +7,14 @@ export const appInitialState: {
   weatherView: boolean;
   userView: boolean;
   stateSwitch: boolean;
+  disabledTraySwipe: boolean;
 } = {
   userLocation: '',
   nodeEnv: 'production',
   weatherView: false,
   userView: false,
   stateSwitch: false,
+  disabledTraySwipe: false,
 };
 
 export const appSlice = createSlice({
@@ -37,6 +39,9 @@ export const appSlice = createSlice({
     toggleStateSwitch: (state) => {
       state.stateSwitch = !state.stateSwitch;
     },
+    accuateDisabledTraySwipe: (state, action: PayloadAction<boolean>) => {
+      state.disabledTraySwipe = action.payload;
+    },
   },
 });
 
@@ -45,11 +50,14 @@ export const {
   toggleWeatherView,
   toggleUserView,
   toggleStateSwitch,
+  accuateDisabledTraySwipe,
 } = appSlice.actions;
 
 export const getStateSwitch = (state: RootState) => state.app.stateSwitch;
 export const getUserLocation = (state: RootState) => state.app.userLocation;
 export const getWeatherView = (state: RootState) => state.app.weatherView;
 export const getUserView = (state: RootState) => state.app.userView;
+export const getDisabledTraySwipe = (state: RootState) =>
+  state.app.disabledTraySwipe;
 
 export default appSlice.reducer;
