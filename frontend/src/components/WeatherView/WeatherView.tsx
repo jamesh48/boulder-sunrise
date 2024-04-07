@@ -21,13 +21,103 @@ import {
 import Image from 'next/image';
 import HtmlTooltip from '../CustomComponents/HTMLTooltip';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import useIsMobile from '@/app/customHooks/useIsMobile';
 
+interface LocalEventDescriptionProps {
+  formattedDateRange: string;
+  venue: { name: string; address: string } | undefined;
+  topics: { edges: { cursor: string; node: { name: string } }[] };
+  description: string;
+  scrollComponent: React.MutableRefObject<HTMLElement | undefined>;
+  scrollXComponent: React.MutableRefObject<HTMLElement | undefined>;
+}
+
+const LocalEventDescription = (props: LocalEventDescriptionProps) => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        padding: '1rem',
+        // ?
+        width: '17.5rem',
+      }}
+    >
+      <Typography
+        className="Venue"
+        variant="h5"
+        sx={{
+          textDecoration: 'underline',
+          padding: '.5rem',
+          paddingBottom: 0,
+        }}
+      >
+        Venue: {props.venue?.name || props.venue?.address || 'See Event'}
+      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          alignItems: 'center',
+          paddingY: '.5rem',
+        }}
+      >
+        <Typography>{props.formattedDateRange}</Typography>
+      </Box>
+      <Box
+        sx={{
+          maxHeight: '15rem',
+          overflowY: 'auto',
+          border: '1px solid white',
+          borderRadius: '5px',
+        }}
+        ref={props.scrollComponent}
+      >
+        <Typography sx={{ padding: '.25rem' }}>
+          {props.description || 'No Description Provided'}
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          paddingTop: '1rem',
+          overflowX: 'auto',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+        }}
+        ref={props.scrollXComponent}
+      >
+        {props.topics.edges.map((edge, idx) => (
+          <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
+            <Chip
+              label={edge.node.name}
+              variant="filled"
+              color="success"
+              sx={{ flex: 1, marginX: '.15rem' }}
+            />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
 
 interface LocalEventPropsWithRef extends LocalEventProps {
   outerScrollComponent: React.MutableRefObject<HTMLDivElement | undefined>;
+  mobileIndex: number;
+  handleMobileIndex: (idx: number) => void;
+  mobileOpen: boolean;
 }
 
 const LocalEvent = (props: LocalEventPropsWithRef) => {
@@ -36,6 +126,8 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
   const [open, setOpen] = useState(false);
   const scrollComponent = useRef<HTMLElement>();
   const scrollXComponent = useRef<HTMLElement>();
+
+  const isMobile = useIsMobile();
 
   const handleToolTipScroll = useCallback((e: WheelEvent) => {
     scrollComponent.current?.scrollTo({
@@ -92,79 +184,16 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
   return (
     <HtmlTooltip
       placement="right"
-      open={open}
+      open={!isMobile && open}
       description={
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            textAlign: 'center',
-            padding: '1rem',
-          }}
-        >
-          <Typography
-            className="Venue"
-            variant="h5"
-            sx={{
-              textDecoration: 'underline',
-              padding: '.5rem',
-              paddingBottom: 0,
-            }}
-          >
-            Venue: {props.venue?.name || props.venue?.address || 'See Event'}
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flex: 1,
-              alignItems: 'center',
-              paddingY: '.5rem',
-            }}
-          >
-            <Typography>{formattedDateRange}</Typography>
-          </Box>
-          <Box
-            sx={{
-              maxHeight: '15rem',
-              overflowY: 'auto',
-              border: '1px solid white',
-              borderRadius: '5px',
-            }}
-            ref={scrollComponent}
-          >
-            <Typography sx={{ padding: '.25rem' }}>
-              {props.description || 'No Description Provided'}
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              paddingTop: '1rem',
-              overflowX: 'auto',
-              '&::-webkit-scrollbar': {
-                display: 'none',
-              },
-              '-ms-overflow-style': 'none',
-              'scrollbar-width': 'none',
-            }}
-            ref={scrollXComponent}
-          >
-            {props.topics.edges.map((edge, idx) => (
-              <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
-                <Chip
-                  label={edge.node.name}
-                  variant="filled"
-                  color="success"
-                  sx={{ flex: 1, marginX: '.15rem' }}
-                />
-              </Box>
-            ))}
-          </Box>
-        </Box>
+        <LocalEventDescription
+          formattedDateRange={formattedDateRange}
+          venue={props.venue}
+          topics={props.topics}
+          description={props.description}
+          scrollComponent={scrollComponent}
+          scrollXComponent={scrollXComponent}
+        />
       }
       divOrSpan="div"
       opacity={1}
@@ -182,9 +211,23 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
           border: '1px solid black',
           marginY: '1rem',
         }}
-        onClick={() => window.open(props.eventUrl)}
-        onMouseOver={() => setOpen(true)}
-        onMouseOut={() => setOpen(false)}
+        onClick={() => {
+          if (isMobile) {
+            props.handleMobileIndex(props.mobileIndex);
+          } else {
+            window.open(props.eventUrl);
+          }
+        }}
+        onMouseOver={() => {
+          if (!isMobile) {
+            setOpen(true);
+          }
+        }}
+        onMouseOut={() => {
+          if (!isMobile) {
+            setOpen(false);
+          }
+        }}
       >
         <Typography
           variant="h5"
@@ -201,6 +244,16 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             layout="responsive"
           />
         </Box>
+        <Collapse in={props.mobileOpen}>
+          <LocalEventDescription
+            formattedDateRange={formattedDateRange}
+            venue={props.venue}
+            topics={props.topics}
+            description={props.description}
+            scrollComponent={scrollComponent}
+            scrollXComponent={scrollXComponent}
+          />
+        </Collapse>
       </Box>
     </HtmlTooltip>
   );
@@ -239,6 +292,11 @@ const WeatherView = (props: WeatherViewProps) => {
     }
   );
 
+  const [mobileIndexOpen, setMobileIndexOpen] = useState(-1);
+  const handleMobileIndex = (idx: number) => {
+    setMobileIndexOpen(idx);
+  };
+
   return (
     <Box
       sx={{
@@ -261,7 +319,7 @@ const WeatherView = (props: WeatherViewProps) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '95%',
+          height: '90%',
           paddingX: weatherView ? '.5rem' : 0,
           flexDirection: 'column',
         }}
@@ -302,6 +360,7 @@ const WeatherView = (props: WeatherViewProps) => {
             display: 'flex',
             flex: 1,
             width: '100%',
+            height: '70%',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
@@ -323,14 +382,18 @@ const WeatherView = (props: WeatherViewProps) => {
             ref={outerScrollComponent}
             sx={{
               overflowY: 'scroll',
-              maxHeight: '60rem',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             {meetups?.edges?.map(({ node: { result } }, idx) => (
               <LocalEvent
                 key={idx}
-                {...result}
+                mobileIndex={idx}
                 outerScrollComponent={outerScrollComponent}
+                handleMobileIndex={handleMobileIndex}
+                mobileOpen={mobileIndexOpen === idx}
+                {...result}
               />
             ))}
           </Box>
