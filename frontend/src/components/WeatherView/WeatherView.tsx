@@ -8,12 +8,53 @@ import {
   toggleWeatherView,
   toggleStateSwitch,
 } from '@/app/appSlice';
-import { useGetCurrentWeatherQuery } from '@/app/services/weatherApiSlice';
+import {
+  useGetCurrentTimeZoneQuery,
+  useGetCurrentWeatherQuery,
+} from '@/app/services/weatherApiSlice';
 import { SkeletonIndicators, WeatherIndicators } from './WeatherIndicators';
+import { useGetCurrentMeetupsQuery } from '@/app/services/meetupApiSlice';
+import Image from 'next/image';
 
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
+
+interface LocalEventProps {
+  title: string;
+  imageUrl: string;
+  eventUrl: string;
+}
+const LocalEvent = (props: LocalEventProps) => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        cursor: 'pointer',
+        borderRadius: '1rem',
+        border: '1px solid black',
+        marginY: '1rem',
+      }}
+      onClick={() => window.open(props.eventUrl)}
+    >
+      <Typography variant="h5" sx={{ marginTop: '.5rem', textAlign: 'center' }}>
+        {props.title}
+      </Typography>
+      <Box sx={{ margin: '.5rem' }}>
+        <Image
+          src={props.imageUrl}
+          width={100}
+          height={100}
+          alt={props.title}
+          layout="responsive"
+        />
+      </Box>
+    </Box>
+  );
+};
 
 const WeatherView = (props: WeatherViewProps) => {
   const theme = useTheme();
@@ -21,6 +62,18 @@ const WeatherView = (props: WeatherViewProps) => {
   const userLocation = useSelector(getUserLocation);
   const weatherView = useSelector(getWeatherView);
 
+  const { data: locationData } = useGetCurrentTimeZoneQuery({
+    city: userLocation,
+  });
+
+  const { data: meetups } = useGetCurrentMeetupsQuery(
+    {
+      lat: locationData?.lat,
+      lon: locationData?.lng,
+      query: 'party',
+    },
+    { skip: !locationData }
+  );
   const {
     data: weatherReport,
     isLoading,
@@ -51,8 +104,9 @@ const WeatherView = (props: WeatherViewProps) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '90%',
+          height: '95%',
           paddingX: weatherView ? '.5rem' : 0,
+          flexDirection: 'column',
         }}
       >
         <Box
@@ -62,7 +116,7 @@ const WeatherView = (props: WeatherViewProps) => {
             justifyContent: 'flex-start',
             alignItems: 'center',
             overflowY: 'auto',
-            height: '100%',
+            flex: 1,
             '&::-webkit-scrollbar': {
               display: 'none',
             },
@@ -74,6 +128,7 @@ const WeatherView = (props: WeatherViewProps) => {
               borderBottom: `3px solid ${theme.palette.primary.main}`,
               marginBottom: '1rem',
               textAlign: 'center',
+              width: '15rem',
             }}
           >
             {weatherReport?.name} Weather
@@ -84,6 +139,44 @@ const WeatherView = (props: WeatherViewProps) => {
           ) : weatherReport ? (
             <WeatherIndicators weatherReport={weatherReport} />
           ) : null}
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flex: 1,
+            width: '100%',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {/* <pre>{JSON.stringify(meetups, null, 4)}</pre> */}
+          <Typography
+            variant="h6"
+            sx={{
+              borderBottom: `3px solid ${theme.palette.primary.main}`,
+              marginBottom: '.5rem',
+              textAlign: 'center',
+              width: '15rem',
+            }}
+          >
+            {weatherReport?.name} Local Events
+          </Typography>
+          <Box
+            sx={{
+              overflowY: 'scroll',
+              maxHeight: '60rem',
+            }}
+          >
+            {meetups?.edges.map(({ node: { result } }, idx) => (
+              <LocalEvent
+                key={idx}
+                title={result.title}
+                imageUrl={result.imageUrl}
+                eventUrl={result.eventUrl}
+              />
+            ))}
+          </Box>
         </Box>
       </Collapse>
       <Box

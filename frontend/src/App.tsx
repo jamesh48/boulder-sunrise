@@ -6,13 +6,13 @@ import { AppProps } from './pages';
 import { Box } from '@mui/material';
 import { useEffect } from 'react';
 
-const MeetupOAuthProvider = (props: { children: JSX.Element }) => {
-  useEffect(() => {
-    window.open('/api/oauth');
-  }, []);
+// const MeetupOAuthProvider = (props: { children: JSX.Element }) => {
+//   useEffect(() => {
+//     window.open('/api/oauth');
+//   }, []);
 
-  return props.children;
-};
+//   return props.children;
+// };
 
 const App = (props: AppProps) => {
   GlobalStore.prototype.configureGlobalStore({
@@ -26,9 +26,9 @@ const App = (props: AppProps) => {
 
   return (
     <Provider store={GlobalStore.prototype.getStore()}>
-      <MeetupOAuthProvider>
-        <BoulderShines />
-      </MeetupOAuthProvider>
+      {/* <MeetupOAuthProvider> */}
+      <BoulderShines />
+      {/* </MeetupOAuthProvider> */}
     </Provider>
   );
 };

@@ -27,7 +27,7 @@ const SunDial = (props: SunDialProps) => {
     location: userLocation,
   });
   const isLoggedIn = Boolean(userLocation);
-  const { data: timeZone } = useGetCurrentTimeZoneQuery(
+  const { data: locationData } = useGetCurrentTimeZoneQuery(
     { city: userLocation },
     { skip: !isLoggedIn }
   );
@@ -42,11 +42,11 @@ const SunDial = (props: SunDialProps) => {
     sunriseLinePosition,
     sunrisePercentage,
     sunsetPercentage,
-  } = useCurrentPlacements(weatherReport, timeZone?.result);
+  } = useCurrentPlacements(weatherReport, locationData?.timezone);
 
   const sunrise = constructLocalDate(
     weatherReport?.sys.sunrise || 0,
-    timeZone?.result
+    locationData?.timezone
   );
   const sunriseStr = `Sunrise: ${sunrise.getHours()}:${
     sunrise.getMinutes().toString().length === 1 ? '0' : ''
@@ -54,13 +54,14 @@ const SunDial = (props: SunDialProps) => {
 
   const sunset = constructLocalDate(
     weatherReport?.sys.sunset || 0,
-    timeZone?.result
+    locationData?.timezone
   );
   const sunsetStr = `Sunset: ${
     sunset.getHours() - 12
   }:${sunset.getMinutes()}pm`;
-
-  const now = moment();
+  const now = moment(
+    constructLocalDate(Date.now(), locationData?.timezone, true)
+  );
   const isMoonTime = now.isBefore(sunrise) || now.isAfter(sunset);
 
   useEffect(() => {
@@ -104,7 +105,7 @@ const SunDial = (props: SunDialProps) => {
         sunrise={sunrise}
         sunrisePercentage={sunrisePercentage}
         sunsetPercentage={sunsetPercentage}
-        timeZoneLoaded={!!timeZone?.result}
+        timeZoneLoaded={!!locationData?.timezone}
         isLoggedIn={props.isLoggedIn}
       />
       <Box
@@ -117,13 +118,13 @@ const SunDial = (props: SunDialProps) => {
             sunrisePercentage + 3
           }%)`,
           transition: 'opacity 2s ease',
-          opacity: timeZone?.result ? 1 : 0,
+          opacity: locationData?.timezone ? 1 : 0,
         }}
       >
-        {!!weatherReport && !!timeZone?.result ? (
+        {!!weatherReport && !!locationData?.timezone ? (
           <Box>
             <WeatherIconContainer
-              timeZone={timeZone?.result}
+              timeZone={locationData?.timezone}
               sunContainerRef={sunContainerRef}
               isMoonTime={isMoonTime}
               currentWeather={weatherReport?.weather[0].main}

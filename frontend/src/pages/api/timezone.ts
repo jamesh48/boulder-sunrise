@@ -48,16 +48,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const userLocation = req.query.city as string;
   const coords = await getLatLngFromCity(userLocation);
   if (coords) {
-    const timeZone = await getTimeZoneFromLatLng(coords.lat, coords.lng);
+    const timezone = await getTimeZoneFromLatLng(coords.lat, coords.lng);
 
-    console.log(`Time zone for ${userLocation}: ${timeZone}`);
+    console.log(`Time zone for ${userLocation}: ${timezone}`);
 
     res.setHeader(
       'Set-Cookie',
       `userLocation=${encodeURIComponent(userLocation)}; Max-Age=604800; Path=/`
     );
 
-    return res.send({ result: timeZone });
+    return res.send({ timezone, ...coords });
   }
 
   return res.send({ error: 'not found' });

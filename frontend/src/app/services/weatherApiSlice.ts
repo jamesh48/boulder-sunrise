@@ -7,7 +7,10 @@ const weatherApiSlice = createApi({
   reducerPath: 'weatherApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
   endpoints: (builder) => ({
-    getCurrentTimeZone: builder.query<{ result: string }, { city: string }>({
+    getCurrentTimeZone: builder.query<
+      { timezone: string; lng: number; lat: number },
+      { city: string }
+    >({
       query: (options) => ({
         url: `/timezone?city=${options.city}`,
       }),

@@ -54,7 +54,7 @@ const BoulderShines = () => {
     <ThemeProvider theme={theme}>
       <ReactScrollWheelHandler
         upHandler={(event) => {
-          if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
+          if (event && Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
             if (userView) {
               dispatch(toggleUserView());
             } else if (!weatherView) {
@@ -63,7 +63,7 @@ const BoulderShines = () => {
           }
         }}
         downHandler={(event) => {
-          if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
+          if (event && Math.abs(event.deltaY) < Math.abs(event.deltaX)) {
             if (weatherView) {
               dispatch(toggleWeatherView());
             } else if (!userView) {

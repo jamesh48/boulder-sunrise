@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './rootReducer';
 import weatherApiSlice from './services/weatherApiSlice';
+import meetupApiSlice from './services/meetupApiSlice';
 
 export default class GlobalStore {
   public store: ReturnType<typeof GlobalStore.prototype.configureGlobalStore>;
@@ -16,11 +17,13 @@ export default class GlobalStore {
       reducer: {
         ...rootReducer,
         [weatherApiSlice.reducerPath]: weatherApiSlice.reducer,
+        [meetupApiSlice.reducerPath]: meetupApiSlice.reducer,
       },
       preloadedState: initialState,
       middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ serializableCheck: { warnAfter: 100 } }).concat(
-          weatherApiSlice.middleware
+          weatherApiSlice.middleware,
+          meetupApiSlice.middleware
         ),
     });
     this.store = innerStore;

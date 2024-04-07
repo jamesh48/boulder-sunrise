@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,17 +17,17 @@ public class GraphQLController {
     "https://api.meetup.com/gql";
 
   @GetMapping("/meetups")
-  public ResponseEntity<?> invokeGraphQLService(         @RequestParam("lat") Double latitude,
-  @RequestParam("lon") Double longitude,
-  @RequestParam("lon") String query
+  public ResponseEntity<?> invokeGraphQLService(         @RequestParam("lat") Double lat,
+  @RequestParam("lon") Double lon,
+  @RequestParam("query") String searchQuery
   ) {
     try {
       // Call the GraphQL service
       GraphQLResponseEntity<KeywordSearchResponse> responseEntity = GraphQLService.callGraphQLService(
         GRAPHQL_URL,
-        latitude,
-        longitude,
-        query
+        lat,
+        lon,
+        searchQuery
       );
 
       // Handle response

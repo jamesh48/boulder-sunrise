@@ -14,6 +14,12 @@ enum SearchSources {
   Groups
 };
 
+enum EventType {
+  ONLINE,
+  PHYSICAL,
+  HYBRID
+}
+
 public class GraphQLService {
   public static String query = "query($filter: SearchConnectionFilter!) {\n" +
                "  keywordSearch(filter: $filter) {\n" +
@@ -43,7 +49,7 @@ public class GraphQLService {
                "}";
 
     public static GraphQLResponseEntity<KeywordSearchResponse>
-    callGraphQLService(String url, Double lat, Double lon, String query) throws IOException {
+    callGraphQLService(String url, Double lat, Double lon, String searchQuery) throws IOException {
         GraphQLTemplate graphQLTemplate = new GraphQLTemplate();
 
         SearchSources events = SearchSources.EVENTS;
@@ -51,7 +57,8 @@ public class GraphQLService {
           .put("lat", lat)
           .put("lon", lon)
           .put("source", events)
-          .put("query", query)
+          .put("query", searchQuery)
+          .put("eventType", EventType.PHYSICAL)
           .build();
 
         GraphQLRequestEntity requestEntity = GraphQLRequestEntity.Builder()
