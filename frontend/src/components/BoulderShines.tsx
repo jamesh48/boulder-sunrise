@@ -21,6 +21,10 @@ import UserPreferences from './UserPreferences/UserPreferences';
 const BoulderShines = () => {
   const userLocation = useSelector(getUserLocation);
   const isLoggedIn = Boolean(userLocation);
+  const dispatch = useDispatch();
+  const userView = useSelector(getUserView);
+  const weatherView = useSelector(getWeatherView);
+  const disabledTraySwipe = useSelector(getDisabledTraySwipe);
 
   const { data: weatherReport } = useGetCurrentWeatherQuery(
     {
@@ -47,11 +51,6 @@ const BoulderShines = () => {
       },
     },
   });
-
-  const dispatch = useDispatch();
-  const userView = useSelector(getUserView);
-  const weatherView = useSelector(getWeatherView);
-  const disabledTraySwipe = useSelector(getDisabledTraySwipe);
 
   return (
     <ThemeProvider theme={theme}>
