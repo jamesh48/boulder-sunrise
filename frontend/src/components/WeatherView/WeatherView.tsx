@@ -26,7 +26,6 @@ interface LocalEventProps {
   eventUrl: string;
 }
 const LocalEvent = (props: LocalEventProps) => {
-  alert(props.imageUrl);
   return (
     <Box
       sx={{
