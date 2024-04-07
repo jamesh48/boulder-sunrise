@@ -6,6 +6,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'secure-content.meetupstatic.com',
         port: '',
+        pathname: '**',
       },
     ],
   },

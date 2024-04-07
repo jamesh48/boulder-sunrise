@@ -26,6 +26,7 @@ interface LocalEventProps {
   eventUrl: string;
 }
 const LocalEvent = (props: LocalEventProps) => {
+  alert(props.imageUrl);
   return (
     <Box
       sx={{
@@ -78,9 +79,14 @@ const WeatherView = (props: WeatherViewProps) => {
     data: weatherReport,
     isLoading,
     isFetching,
-  } = useGetCurrentWeatherQuery({
-    location: userLocation,
-  });
+  } = useGetCurrentWeatherQuery(
+    {
+      location: userLocation,
+    },
+    {
+      skip: !userLocation,
+    }
+  );
 
   return (
     <Box

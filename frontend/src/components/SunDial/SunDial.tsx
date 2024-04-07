@@ -23,9 +23,14 @@ const SunDial = (props: SunDialProps) => {
   const theme = useTheme();
   const userLocation = useSelector(getUserLocation);
 
-  const { data: weatherReport } = useGetCurrentWeatherQuery({
-    location: userLocation,
-  });
+  const { data: weatherReport } = useGetCurrentWeatherQuery(
+    {
+      location: userLocation,
+    },
+    {
+      skip: !props.isLoggedIn,
+    }
+  );
   const isLoggedIn = Boolean(userLocation);
   const { data: locationData } = useGetCurrentTimeZoneQuery(
     { city: userLocation },
