@@ -168,7 +168,7 @@ const WeatherView = (props: WeatherViewProps) => {
               maxHeight: '60rem',
             }}
           >
-            {meetups?.edges.map(({ node: { result } }, idx) => (
+            {meetups?.edges?.map(({ node: { result } }, idx) => (
               <LocalEvent
                 key={idx}
                 title={result.title}

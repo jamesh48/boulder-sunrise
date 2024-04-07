@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 interface MeetupResponse {
   count: number;
-  edges: {
+  edges?: {
     cursor: string;
     node: {
       id: string;
