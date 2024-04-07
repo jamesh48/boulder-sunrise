@@ -18,6 +18,7 @@
     "d4m-unit-converter": "^4.0.4",
     "formik": "^2.4.5",
     "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
     "next": "14.1.4",
     "node-fetch": "^3.3.2",
     "react": "^18",

@@ -1,31 +1,21 @@
-export const getTodayWithTZ = (timeZone: string | undefined) => {
-  if (!timeZone) {
-    return {};
-  }
-  // Get the current date and time as the startDateRange
-  const startDateRange = new Date().toLocaleString('en-US', {
-    timeZone,
-    dateStyle: 'full',
-    timeStyle: 'long',
+import moment from 'moment-timezone';
+
+export const getTodayWithTZ = (timezone: string | undefined) => {
+  // Get current date/time in the specified timezone
+  const now = moment().tz(timezone || 'America/Denver', false);
+
+  // Calculate end of today in the specified timezone
+  const endOfDay = now.clone().endOf('day');
+
+  // Set time to 23:59:59.999 for end of today
+  endOfDay.set({
+    hour: 23,
+    minute: 59,
+    second: 59,
+    millisecond: 999,
   });
 
-  // Get the end of the current day (12 midnight) as the endDateRange
-  const today = new Date();
-  const endDateRange = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() + 1,
-    0,
-    0,
-    0
-  ).toLocaleString('en-US', { timeZone, dateStyle: 'full', timeStyle: 'long' });
-
-  // Convert the formatted strings to ZonedDateTime format
-  const startDateRangeZoned = new Date(startDateRange).toISOString();
-  const endDateRangeZoned = new Date(endDateRange).toISOString();
-
   return {
-    startDateRange: startDateRangeZoned,
-    endDateRange: endDateRangeZoned,
+    endDateRange: endOfDay.toISOString(),
   };
 };

@@ -42,12 +42,11 @@ const meetupApiSlice = createApi({
         lat: number | undefined;
         lon: number | undefined;
         query: string;
-        startDateRange: string;
         endDateRange: string;
       }
     >({
       query: (options) => ({
-        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&startDateRange=${options.startDateRange}&endDateRange=${options.endDateRange}`,
+        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&endDateRange=${options.endDateRange}`,
       }),
     }),
   }),

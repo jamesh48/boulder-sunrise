@@ -69,7 +69,6 @@ public class GraphQLService {
     Double lat,
     Double lon,
     String searchQuery,
-    String startDateRange,
     String endDateRange
   ) throws IOException {
     GraphQLTemplate graphQLTemplate = new GraphQLTemplate();
@@ -81,7 +80,6 @@ public class GraphQLService {
       .put("source", events)
       .put("query", searchQuery)
       .put("eventType", EventType.PHYSICAL)
-      .put("startDateRange", startDateRange)
       .put("endDateRange", endDateRange)
       .build();
 

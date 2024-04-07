@@ -43,8 +43,6 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
         alignItems: 'center',
         textAlign: 'center',
         padding: '1rem',
-        // ?
-        width: '17.5rem',
       }}
     >
       <Typography
@@ -74,10 +72,11 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
           overflowY: 'auto',
           border: '1px solid white',
           borderRadius: '5px',
+          width: '100%',
         }}
         ref={props.scrollComponent}
       >
-        <Typography sx={{ padding: '.25rem' }}>
+        <Typography sx={{ padding: '.25rem', display: 'flex', width: '100%' }}>
           {props.description || 'No Description Provided'}
         </Typography>
       </Box>
@@ -289,11 +288,11 @@ const WeatherView = (props: WeatherViewProps) => {
       lat: locationData?.lat,
       lon: locationData?.lng,
       query: 'party',
-      startDateRange: todayWithTZ.startDateRange,
       endDateRange: todayWithTZ.endDateRange,
     },
     { skip: !locationData }
   );
+
   const {
     data: weatherReport,
     isLoading,
@@ -388,10 +387,10 @@ const WeatherView = (props: WeatherViewProps) => {
               borderBottom: `3px solid ${theme.palette.primary.main}`,
               marginBottom: '.5rem',
               textAlign: 'center',
-              width: '15rem',
+              width: '20rem',
             }}
           >
-            {weatherReport?.name} Local Events
+            {`${weatherReport?.name} Local Events Today`}
           </Typography>
           <Box
             ref={outerScrollComponent}

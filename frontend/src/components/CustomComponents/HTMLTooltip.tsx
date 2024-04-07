@@ -67,7 +67,7 @@ const HtmlTooltip = ({
         tooltip: {
           sx: {
             color: textColor,
-            maxWidth: '30rem',
+            maxWidth: '45rem',
             bgcolor: backgroundColor || 'rhapsodyBlue.main',
             border: `1px solid ${borderColor}`,
             opacity: `${opacity} !important`,

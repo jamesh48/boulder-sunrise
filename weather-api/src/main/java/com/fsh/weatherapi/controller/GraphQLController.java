@@ -20,7 +20,6 @@ public class GraphQLController {
     @RequestParam("lat") Double lat,
     @RequestParam("lon") Double lon,
     @RequestParam("query") String searchQuery,
-    @RequestParam("startDateRange") String startDateRange,
     @RequestParam("endDateRange") String endDateRange
   ) {
     try {
@@ -30,7 +29,6 @@ public class GraphQLController {
         lat,
         lon,
         searchQuery,
-        startDateRange,
         endDateRange
       );
 
