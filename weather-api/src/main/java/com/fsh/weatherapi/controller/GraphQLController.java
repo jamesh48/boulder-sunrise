@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GraphQLController {
 
-  private static final String GRAPHQL_URL =
-    "https://api.meetup.com/gql";
+  private static final String GRAPHQL_URL = "https://api.meetup.com/gql";
 
   @GetMapping("/meetups")
-  public ResponseEntity<?> invokeGraphQLService(         @RequestParam("lat") Double lat,
-  @RequestParam("lon") Double lon,
-  @RequestParam("query") String searchQuery
+  public ResponseEntity<?> invokeGraphQLService(
+    @RequestParam("lat") Double lat,
+    @RequestParam("lon") Double lon,
+    @RequestParam("query") String searchQuery,
+    @RequestParam("startDateRange") String startDateRange,
+    @RequestParam("endDateRange") String endDateRange
   ) {
     try {
       // Call the GraphQL service
@@ -27,7 +29,9 @@ public class GraphQLController {
         GRAPHQL_URL,
         lat,
         lon,
-        searchQuery
+        searchQuery,
+        startDateRange,
+        endDateRange
       );
 
       // Handle response

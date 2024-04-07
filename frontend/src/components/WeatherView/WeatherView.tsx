@@ -22,6 +22,7 @@ import {
 } from '@/app/services/meetupApiSlice';
 import HtmlTooltip from '../CustomComponents/HTMLTooltip';
 import useIsMobile from '@/app/customHooks/useIsMobile';
+import { getTodayWithTZ } from '@/app/utils/getTodayWithTZ';
 
 interface LocalEventDescriptionProps {
   formattedDateRange: string;
@@ -281,12 +282,15 @@ const WeatherView = (props: WeatherViewProps) => {
   });
 
   const outerScrollComponent = useRef<HTMLDivElement>();
+  const todayWithTZ = getTodayWithTZ(locationData?.timezone);
 
   const { data: meetups } = useGetCurrentMeetupsQuery(
     {
       lat: locationData?.lat,
       lon: locationData?.lng,
       query: 'party',
+      startDateRange: todayWithTZ.startDateRange,
+      endDateRange: todayWithTZ.endDateRange,
     },
     { skip: !locationData }
   );

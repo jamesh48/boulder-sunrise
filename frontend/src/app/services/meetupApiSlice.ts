@@ -38,10 +38,16 @@ const meetupApiSlice = createApi({
   endpoints: (builder) => ({
     getCurrentMeetups: builder.query<
       MeetupResponse,
-      { lat: number | undefined; lon: number | undefined; query: string }
+      {
+        lat: number | undefined;
+        lon: number | undefined;
+        query: string;
+        startDateRange: string;
+        endDateRange: string;
+      }
     >({
       query: (options) => ({
-        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}`,
+        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&startDateRange=${options.startDateRange}&endDateRange=${options.endDateRange}`,
       }),
     }),
   }),
