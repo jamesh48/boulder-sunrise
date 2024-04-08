@@ -2,7 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
-import { Box, Collapse, IconButton, Typography, Chip } from '@mui/material';
+import {
+  Box,
+  Collapse,
+  IconButton,
+  Typography,
+  Chip,
+  Skeleton,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   getWeatherView,
@@ -118,6 +125,7 @@ interface LocalEventPropsWithRef extends LocalEventProps {
   mobileIndex: number;
   handleMobileIndex: (idx: number) => void;
   mobileOpen: boolean;
+  timezone: string | undefined;
 }
 
 const LocalEvent = (props: LocalEventPropsWithRef) => {
@@ -176,10 +184,12 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+    timeZone: props.timezone,
   })} - ${endDateTime.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+    timeZone: props.timezone,
   })}`;
 
   return (
@@ -283,7 +293,11 @@ const WeatherView = (props: WeatherViewProps) => {
   const outerScrollComponent = useRef<HTMLDivElement>();
   const todayWithTZ = getTodayWithTZ(locationData?.timezone);
 
-  const { data: meetups } = useGetCurrentMeetupsQuery(
+  const {
+    data: meetups,
+    isLoading: isLoadingMeetups,
+    isFetching: isFetchingMeetups,
+  } = useGetCurrentMeetupsQuery(
     {
       lat: locationData?.lat,
       lon: locationData?.lng,
@@ -295,8 +309,8 @@ const WeatherView = (props: WeatherViewProps) => {
 
   const {
     data: weatherReport,
-    isLoading,
-    isFetching,
+    isLoading: isLoadingWeather,
+    isFetching: isFetchingWeather,
   } = useGetCurrentWeatherQuery(
     {
       location: userLocation,
@@ -360,10 +374,14 @@ const WeatherView = (props: WeatherViewProps) => {
               width: '15rem',
             }}
           >
-            {weatherReport?.name} Weather
+            {weatherReport?.name ? (
+              `${weatherReport.name} Weather`
+            ) : (
+              <Skeleton />
+            )}
           </Typography>
 
-          {isLoading || isFetching ? (
+          {isLoadingWeather || isFetchingWeather ? (
             <SkeletonIndicators />
           ) : weatherReport ? (
             <WeatherIndicators weatherReport={weatherReport} />
@@ -390,7 +408,11 @@ const WeatherView = (props: WeatherViewProps) => {
               width: '20rem',
             }}
           >
-            {`${weatherReport?.name} Local Events Today`}
+            {weatherReport?.name ? (
+              `${weatherReport?.name} Local Events Today`
+            ) : (
+              <Skeleton />
+            )}
           </Typography>
           <Box
             ref={outerScrollComponent}
@@ -400,16 +422,25 @@ const WeatherView = (props: WeatherViewProps) => {
               flexDirection: 'column',
             }}
           >
-            {meetups?.edges?.map(({ node: { result } }, idx) => (
-              <LocalEvent
-                key={idx}
-                mobileIndex={idx}
-                outerScrollComponent={outerScrollComponent}
-                handleMobileIndex={handleMobileIndex}
-                mobileOpen={mobileIndexOpen === idx}
-                {...result}
-              />
-            ))}
+            {isLoadingMeetups || isFetchingMeetups ? (
+              <Skeleton />
+            ) : meetups?.edges?.length ? (
+              meetups.edges.map(({ node: { result } }, idx) => (
+                <LocalEvent
+                  timezone={locationData?.timezone}
+                  key={idx}
+                  mobileIndex={idx}
+                  outerScrollComponent={outerScrollComponent}
+                  handleMobileIndex={handleMobileIndex}
+                  mobileOpen={mobileIndexOpen === idx}
+                  {...result}
+                />
+              ))
+            ) : (
+              <Box>
+                <Typography>~ No More Events Today ~</Typography>
+              </Box>
+            )}
           </Box>
         </Box>
       </Collapse>

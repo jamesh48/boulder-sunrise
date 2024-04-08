@@ -10,14 +10,13 @@ import {
 } from '../icons';
 import { CurrentWeather } from '@/app/services/types';
 import HtmlTooltip from '../CustomComponents/HTMLTooltip';
-import { useSelector } from 'react-redux';
-import { getStateSwitch } from '@/app/appSlice';
 
 interface WeatherIconContainerProps {
   timeZone: string | undefined;
   sunContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
   isMoonTime: boolean;
   currentWeather: CurrentWeather;
+  timestamp: Date;
 }
 
 const weatherIconMap = {
@@ -43,10 +42,8 @@ const weatherIconMap = {
   },
 };
 
-const WeatherIconContainer = (props: WeatherIconContainerProps) => {
+export default function WeatherIconContainer(props: WeatherIconContainerProps) {
   const theme = useTheme();
-  // state switch to rerender the tooltip when trays open/close
-  useSelector(getStateSwitch);
   const ind = props.isMoonTime ? 'night' : 'day';
 
   return (
@@ -60,7 +57,7 @@ const WeatherIconContainer = (props: WeatherIconContainerProps) => {
       }}
     >
       <HtmlTooltip
-        description={new Date().toLocaleTimeString(undefined, {
+        description={new Date(props.timestamp).toLocaleTimeString(undefined, {
           timeZone: props.timeZone,
         })}
         divOrSpan="div"
@@ -76,6 +73,4 @@ const WeatherIconContainer = (props: WeatherIconContainerProps) => {
       </HtmlTooltip>
     </Box>
   );
-};
-
-export default WeatherIconContainer;
+}

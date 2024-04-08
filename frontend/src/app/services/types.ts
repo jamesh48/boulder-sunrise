@@ -32,5 +32,5 @@ export interface WeatherReport {
   id: number;
   base: string;
   wind: { deg: number; speed: number; gust: number };
-  timestamp: string;
+  timestamp: Date;
 }

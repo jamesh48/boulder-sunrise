@@ -133,6 +133,7 @@ const SunDial = (props: SunDialProps) => {
               sunContainerRef={sunContainerRef}
               isMoonTime={isMoonTime}
               currentWeather={weatherReport?.weather[0].main}
+              timestamp={weatherReport?.timestamp}
             />
 
             <SunriseSunset

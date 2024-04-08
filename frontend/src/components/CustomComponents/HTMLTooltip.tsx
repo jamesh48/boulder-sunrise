@@ -1,5 +1,7 @@
 import React from 'react';
 import { Box, Popper, Tooltip, TooltipProps } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { getStateSwitch } from '@/app/appSlice';
 
 interface HtmlTooltipProps {
   children: TooltipProps['children'];
@@ -30,6 +32,9 @@ const HtmlTooltip = ({
   borderColor = 'white',
   padding = '.25rem .5rem',
 }: HtmlTooltipProps): JSX.Element => {
+  // state switch to rerender the tooltip when trays open/close
+  useSelector(getStateSwitch);
+
   // eslint-disable-next-line react/display-name
   const TooltipParent = React.forwardRef((props, ref) => {
     return divOrSpan === 'div' ? (
@@ -92,5 +97,8 @@ const HtmlTooltip = ({
     </Tooltip>
   );
 };
+const MemoizedTooltip = React.memo(HtmlTooltip, (prevProps, nextProps) => {
+  return prevProps.description === nextProps.description;
+});
 
-export default HtmlTooltip;
+export default MemoizedTooltip;
