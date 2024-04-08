@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
@@ -154,11 +154,13 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
     dispatch(accuateDisabledTraySwipe(open));
   }, [open, dispatch]);
 
+  const cachedMouseWheelHandler = useMemo(
+    () => props.outerScrollComponent.current?.onwheel,
+    [props.outerScrollComponent]
+  );
+
   useEffect(() => {
     if (props.outerScrollComponent?.current) {
-      const cachedMouseWheelHandler =
-        props.outerScrollComponent.current.onwheel;
-
       if (open) {
         props.outerScrollComponent.current.onwheel = (e) => {
           e.preventDefault();
@@ -168,11 +170,16 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
       return () => {
         window.removeEventListener('wheel', handleToolTipScroll, true);
         if (props.outerScrollComponent.current) {
-          props.outerScrollComponent.current.onwheel = cachedMouseWheelHandler;
+          props.outerScrollComponent.current.onwheel = cachedMouseWheelHandler!;
         }
       };
     }
-  }, [open, handleToolTipScroll, props.outerScrollComponent]);
+  }, [
+    open,
+    handleToolTipScroll,
+    props.outerScrollComponent,
+    cachedMouseWheelHandler,
+  ]);
 
   const startDateTime = new Date(new Date(props.dateTime));
 
@@ -244,7 +251,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             setOpen(true);
           }
         }}
-        onMouseOut={() => {
+        onMouseLeave={() => {
           if (!isMobile) {
             setOpen(false);
           }
