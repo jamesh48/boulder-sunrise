@@ -1,4 +1,5 @@
 import { Box, useTheme } from '@mui/material';
+import moment from 'moment';
 import {
   DayRainIcon,
   HazeIcon,
@@ -46,6 +47,10 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
   const theme = useTheme();
   const ind = props.isMoonTime ? 'night' : 'day';
 
+  const localDateTime = moment.utc(props.timestamp).tz(props.timeZone!);
+
+  const formattedTime = localDateTime.format('h:mm:ss A');
+
   return (
     <Box
       ref={props.sunContainerRef}
@@ -57,9 +62,7 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
       }}
     >
       <HtmlTooltip
-        description={new Date(props.timestamp).toLocaleTimeString('en-US', {
-          timeZone: props.timeZone,
-        })}
+        description={formattedTime}
         divOrSpan="div"
         open={!!props.timeZone}
         placement="right"

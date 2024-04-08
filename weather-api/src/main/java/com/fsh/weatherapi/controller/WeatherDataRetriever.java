@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 import org.json.JSONObject;
@@ -81,11 +82,16 @@ public class WeatherDataRetriever {
     }
     // Handle TimeStamp
     JSONObject jsonObject = new JSONObject(result.toString());
-    LocalDateTime now = LocalDateTime.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-      "yyyy-MM-dd HH:mm:ss"
-    );
+
+    // Get the current time in UTC
+    LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+
+    // Format the LocalDateTime as a string using a specific pattern
+    DateTimeFormatter formatter = DateTimeFormatter
+      .ofPattern("yyyy-MM-dd HH:mm:ss")
+      .withZone(ZoneOffset.UTC);
     String timestamp = now.format(formatter);
+
     jsonObject.put("timestamp", timestamp);
 
     String updatedWeatherData = jsonObject.toString();
