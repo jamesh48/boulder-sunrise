@@ -57,7 +57,7 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
       }}
     >
       <HtmlTooltip
-        description={new Date(props.timestamp).toLocaleTimeString(undefined, {
+        description={new Date(props.timestamp).toLocaleTimeString('en-US', {
           timeZone: props.timeZone,
         })}
         divOrSpan="div"
