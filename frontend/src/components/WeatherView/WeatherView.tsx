@@ -122,9 +122,9 @@ interface WeatherViewProps {
 
 interface LocalEventPropsWithRef extends LocalEventProps {
   outerScrollComponent: React.MutableRefObject<HTMLDivElement | undefined>;
-  mobileIndex: number;
-  handleMobileIndex: (idx: number) => void;
-  mobileOpen: boolean;
+  openIndex: number;
+  handleOpenIndex: (idx: number) => void;
+  eventOpen: boolean;
   timezone: string | undefined;
 }
 
@@ -161,7 +161,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
 
   useEffect(() => {
     if (props.outerScrollComponent?.current) {
-      if (open) {
+      if (props.eventOpen) {
         props.outerScrollComponent.current.onwheel = (e) => {
           e.preventDefault();
         };
@@ -175,7 +175,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
       };
     }
   }, [
-    open,
+    props.eventOpen,
     handleToolTipScroll,
     props.outerScrollComponent,
     cachedMouseWheelHandler,
@@ -202,7 +202,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
   return (
     <HtmlTooltip
       placement="right"
-      open={!isMobile && open}
+      open={!isMobile && props.eventOpen}
       description={
         <LocalEventDescription
           formattedDateRange={formattedDateRange}
@@ -232,7 +232,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
         ref={activeEventRef}
         onClick={() => {
           if (isMobile) {
-            props.handleMobileIndex(props.mobileIndex);
+            props.handleOpenIndex(props.openIndex);
             // Reset Scroll Position of Active Element after another one Closes
             setTimeout(() => {
               if (activeEventRef.current) {
@@ -248,12 +248,12 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
         }}
         onMouseOver={() => {
           if (!isMobile) {
-            setOpen(true);
+            props.handleOpenIndex(props.openIndex);
           }
         }}
         onMouseLeave={() => {
           if (!isMobile) {
-            setOpen(false);
+            props.handleOpenIndex(-1);
           }
         }}
       >
@@ -272,7 +272,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             layout="responsive"
           />
         </Box>
-        {props.mobileOpen ? (
+        {isMobile ? (
           <LocalEventDescription
             formattedDateRange={formattedDateRange}
             venue={props.venue}
@@ -327,9 +327,9 @@ const WeatherView = (props: WeatherViewProps) => {
     }
   );
 
-  const [mobileIndexOpen, setMobileIndexOpen] = useState(-1);
-  const handleMobileIndex = (idx: number) => {
-    setMobileIndexOpen(idx);
+  const [indexOpen, setIndexOpen] = useState(-1);
+  const handleOpenIndex = (idx: number) => {
+    setIndexOpen(idx);
   };
 
   return (
@@ -436,10 +436,10 @@ const WeatherView = (props: WeatherViewProps) => {
                 <LocalEvent
                   timezone={locationData?.timezone}
                   key={idx}
-                  mobileIndex={idx}
+                  openIndex={idx}
                   outerScrollComponent={outerScrollComponent}
-                  handleMobileIndex={handleMobileIndex}
-                  mobileOpen={mobileIndexOpen === idx}
+                  handleOpenIndex={handleOpenIndex}
+                  eventOpen={indexOpen === idx}
                   {...result}
                 />
               ))
