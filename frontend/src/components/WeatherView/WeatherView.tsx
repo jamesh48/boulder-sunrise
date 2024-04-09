@@ -122,7 +122,23 @@ const WeatherView = (props: WeatherViewProps) => {
   }, [searchAdditionalOptionsOpen]);
 
   useEffect(() => {
-    const debounceDelay = 1000;
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' && inputRef.current) {
+        inputRef.current.blur(); // Assuming inputRef is a ref to your input element
+      }
+    };
+
+    if (isInputFocused) {
+      document.addEventListener('keypress', handleKeyPress);
+    }
+
+    return () => {
+      document.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [isInputFocused]);
+
+  useEffect(() => {
+    const debounceDelay = 750;
     if (debounceTimer) {
       clearTimeout(debounceTimer);
     }
@@ -143,6 +159,7 @@ const WeatherView = (props: WeatherViewProps) => {
   };
 
   const anchorRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleInputFocus = () => {
     setIsInputFocused(true);
@@ -293,6 +310,7 @@ const WeatherView = (props: WeatherViewProps) => {
                 }}
                 onFocus={handleInputFocus}
                 onBlur={handleInputBlur}
+                inputRef={inputRef}
               />
               {debouncedEventQuery ? (
                 <Chip
@@ -350,10 +368,14 @@ const WeatherView = (props: WeatherViewProps) => {
                             </InputLabel>
                             <OutlinedInput
                               fullWidth
-                              label={` Radius from ${userLocation} (miles)`}
+                              label={`Radius from ${userLocation} (miles)`}
                               value={searchRadius}
                               onChange={(ev) => {
-                                setSearchRadius(Number(ev.currentTarget.value));
+                                if (!isNaN(Number(ev.currentTarget.value))) {
+                                  setSearchRadius(
+                                    Number(ev.currentTarget.value)
+                                  );
+                                }
                               }}
                               autoFocus
                             />
