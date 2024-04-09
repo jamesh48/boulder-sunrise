@@ -13,10 +13,8 @@ import {
   Skeleton,
   OutlinedInput,
   Chip,
-  Select,
   FormControl,
   InputLabel,
-  MenuItem,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -35,6 +33,9 @@ import { getTodayWithTZ } from '@/app/utils/getTodayWithTZ';
 import LocalEvent from './LocalEvent';
 import BlockingTooltip from '../CustomComponents/BlockingTooltip';
 import BasicSelect from '../CustomComponents/BasicSelect';
+import useSortOrder from '@/app/customHooks/useSortOrder';
+import useSearchRadius from '@/app/customHooks/useSearchRadius';
+import useSortBy from '@/app/customHooks/useSortBy';
 
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
@@ -53,10 +54,21 @@ const WeatherView = (props: WeatherViewProps) => {
   );
   const [searchAdditionalOptionsOpen, setSearchAdditionalOptionsOpen] =
     useState(false);
-  const [searchRadius, setSearchRadius] = useState(5);
-  const [confirmedSearchRadius, setConfirmedSearchRadius] = useState(5);
-  const [sortOrder, setSortOrder] = useState('ASC');
-  const [sortBy, setSortBy] = useState('relevance');
+
+  const {
+    getters: { searchRadius, confirmedSearchRadius },
+    setters: { setSearchRadius, setConfirmedSearchRadius },
+  } = useSearchRadius(5);
+
+  const {
+    getters: { sortOrder, confirmedSortOrder },
+    setters: { setSortOrder, setConfirmedSortOrder },
+  } = useSortOrder('ASC');
+
+  const {
+    getters: { sortBy, confirmedSortBy },
+    setters: { setSortBy, setConfirmedSortBy },
+  } = useSortBy('relevance');
 
   const handleSortOrder = (input: string) => {
     setSortOrder(input);
@@ -84,8 +96,8 @@ const WeatherView = (props: WeatherViewProps) => {
       query: debouncedEventQuery,
       endDateRange: todayWithTZ.endDateRange,
       radius: confirmedSearchRadius,
-      sortOrder,
-      sortBy,
+      sortOrder: confirmedSortOrder,
+      sortBy: confirmedSortBy,
     },
     { skip: !locationData }
   );
@@ -320,6 +332,8 @@ const WeatherView = (props: WeatherViewProps) => {
                         ev.preventDefault();
                         setSearchAdditionalOptionsOpen(false);
                         setConfirmedSearchRadius(searchRadius);
+                        setConfirmedSortBy(sortBy);
+                        setConfirmedSortOrder(sortOrder);
                       }}
                     >
                       <Box
@@ -384,12 +398,19 @@ const WeatherView = (props: WeatherViewProps) => {
                 </BlockingTooltip>
               ) : null}
             </Box>
+            <hr
+              style={{
+                width: '70%',
+                margin: '.5rem',
+                border: '2px solid ' + theme.palette.primary.main,
+              }}
+            />
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 overflowY: 'auto',
-                height: '75%',
+                height: '50%',
                 width: '100%',
                 alignItems: 'center',
               }}
@@ -410,7 +431,7 @@ const WeatherView = (props: WeatherViewProps) => {
               ) : meetups?.edges?.length ? (
                 meetups.edges.map(({ node: { result } }, idx) => (
                   // Leave this box wrapper or the events jump upwards when being hovered on
-                  <Box key={idx}>
+                  <Box key={idx} sx={{ width: '100%' }}>
                     <LocalEvent
                       timezone={locationData?.timezone}
                       openIndex={idx}

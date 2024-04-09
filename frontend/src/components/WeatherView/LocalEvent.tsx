@@ -126,8 +126,8 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
           flexDirection: 'column',
           cursor: 'pointer',
           borderRadius: '1rem',
-          border: '1px solid black',
-          marginY: '1rem',
+          border: '1px solid ' + theme.palette.primary.main,
+          marginBottom: '1rem',
           marginRight: '1rem',
         }}
         ref={activeEventRef}

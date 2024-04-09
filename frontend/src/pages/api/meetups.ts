@@ -20,12 +20,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     sortBy: keywordSortField,
     sortOrder,
   } = req.query;
-  const endpoint = (() => {
-    if (process.env.NODE_ENV === 'production') {
-      return `https://data.bertramcappuccino.com/meetups?query=${query}&lat=${lat}&lon=${lon}&endDateRange=${endDateRange}&radius=${radius}&keywordSortField=${keywordSortField}`;
-    }
-    return `http://localhost:8080/meetups?query=${query}&lat=${lat}&lon=${lon}&endDateRange=${endDateRange}&radius=${radius}&keywordSortField=${keywordSortField}`;
-  })();
+
+  const params = {
+    query,
+    lat,
+    lon,
+    endDateRange,
+    radius,
+    keywordSortField,
+  } as { [key: string]: string };
+
+  const queryString = Object.keys(params)
+    .map(
+      (key) => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
+    )
+    .join('&');
+
+  const baseUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://data.bertramcappuccino.com/meetups'
+      : 'http://localhost:8080/meetups';
+
+  const endpoint = baseUrl + '?' + queryString;
 
   const response = await fetch(endpoint);
   const data: MeetupResponse = await response.json();
