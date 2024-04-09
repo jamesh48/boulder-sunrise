@@ -1,40 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { MeetupResponse } from '../../shared/types';
 
-export interface Venue {
-  name: string;
-  address: string;
-  city: string;
-  state: string;
-  postalCode: string;
-}
-export interface LocalEvent {
-  title: string;
-  imageUrl: string;
-  eventUrl: string;
-  image: { baseUrl: string };
-  going: boolean;
-  howToFindUs: string;
-  description: string;
-  shortDescription: string;
-  dateTime: string;
-  endTime: string;
-  topics: {
-    count: number;
-    edges: { cursor: string; node: { name: string } }[];
-  };
-  venue?: Venue;
-}
-
-interface MeetupResponse {
-  count: number;
-  edges?: {
-    cursor: string;
-    node: {
-      id: string;
-      result: LocalEvent;
-    };
-  }[];
-}
 const meetupApiSlice = createApi({
   tagTypes: ['Meetup'],
   reducerPath: 'meetupApi',

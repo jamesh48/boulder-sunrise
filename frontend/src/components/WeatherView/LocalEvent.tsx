@@ -4,7 +4,7 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
-import { LocalEvent as LocalEventProps } from '@/app/services/meetupApiSlice';
+import { LocalEvent as LocalEventProps } from '../../shared/types';
 import LocalEventDescription from './LocalEventDescription';
 import MemoizedTooltip from '../CustomComponents/HTMLTooltip';
 

@@ -1,10 +1,10 @@
-import { Venue } from '@/app/services/meetupApiSlice';
+import { TopicEdge, Venue } from '../../shared/types';
 import { Box, Chip, Typography } from '@mui/material';
 
 interface LocalEventDescriptionProps {
   formattedDateRange: string;
   venue: Venue | undefined;
-  topics: { edges: { cursor: string; node: { name: string } }[] };
+  topics: { edges: TopicEdge[] };
   description: string;
   scrollComponent: React.MutableRefObject<HTMLElement | undefined>;
   scrollXComponent: React.MutableRefObject<HTMLElement | undefined>;

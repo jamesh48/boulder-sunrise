@@ -1,14 +1,5 @@
-import { LocalEvent } from '@/app/services/meetupApiSlice';
 import { NextApiRequest, NextApiResponse } from 'next';
-
-interface MeetupResponse {
-  edges: {
-    node: {
-      id: string;
-      result: LocalEvent;
-    };
-  }[];
-}
+import { MeetupResponse } from '../../shared/types';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { sortOrder, ...params } = req.query as { [key: string]: string };
@@ -29,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const data: MeetupResponse = await response.json();
 
   if (sortOrder === 'DESC') {
-    data.edges.sort((a, b) => {
+    data.edges?.sort((a, b) => {
       const dateA = new Date(a.node.result.dateTime).getTime();
       const dateB = new Date(b.node.result.dateTime).getTime();
       return dateB - dateA;
