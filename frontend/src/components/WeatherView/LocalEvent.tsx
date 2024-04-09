@@ -165,7 +165,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             layout="responsive"
           />
         </Box>
-        {isMobile ? (
+        {isMobile && props.eventOpen ? (
           <LocalEventDescription
             formattedDateRange={formattedDateRange}
             venue={props.venue}
