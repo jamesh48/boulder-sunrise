@@ -17,22 +17,24 @@ public class GraphQLController {
 
   @GetMapping("/meetups")
   public ResponseEntity<?> invokeGraphQLService(
-    @RequestParam("lat") Double lat,
-    @RequestParam("lon") Double lon,
-    @RequestParam("query") String searchQuery,
-    @RequestParam("endDateRange") String endDateRange,
-     @RequestParam("radius") float radius
-  ) {
+      @RequestParam("lat") Double lat,
+      @RequestParam("lon") Double lon,
+      @RequestParam("query") String searchQuery,
+      @RequestParam("endDateRange") String endDateRange,
+      @RequestParam("radius") float radius,
+      @RequestParam("keywordSortField") String keywordSortFieldString
+     ) {
     try {
       // Call the GraphQL service
       GraphQLResponseEntity<KeywordSearchResponse> responseEntity = GraphQLService.callGraphQLService(
-        GRAPHQL_URL,
-        lat,
-        lon,
-        searchQuery,
-        endDateRange,
-        radius
-      );
+          GRAPHQL_URL,
+          lat,
+          lon,
+          searchQuery,
+          endDateRange,
+          radius,
+          keywordSortFieldString
+          );
 
       // Handle response
       // if (responseEntity.isOk()) {
@@ -48,8 +50,8 @@ public class GraphQLController {
     } catch (IOException e) {
       // Handle exception...
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Exception occurred: " + e.getMessage());
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Exception occurred: " + e.getMessage());
     }
   }
 }
