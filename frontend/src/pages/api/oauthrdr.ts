@@ -30,7 +30,6 @@ async function requestAccessToken(
 
     if (!response.ok) {
       const test = await response.json();
-      console.log(test);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -57,7 +56,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     MEETUP_CLIENT_RDR_URL,
     code
   );
-  console.log(accessToken);
   return res.send({ message: 'OK' });
 };
 

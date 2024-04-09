@@ -13,6 +13,10 @@ import {
   Skeleton,
   OutlinedInput,
   Chip,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -30,6 +34,7 @@ import { useGetCurrentMeetupsQuery } from '@/app/services/meetupApiSlice';
 import { getTodayWithTZ } from '@/app/utils/getTodayWithTZ';
 import LocalEvent from './LocalEvent';
 import BlockingTooltip from '../CustomComponents/BlockingTooltip';
+import BasicSelect from '../CustomComponents/BasicSelect';
 
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
@@ -50,6 +55,17 @@ const WeatherView = (props: WeatherViewProps) => {
     useState(false);
   const [searchRadius, setSearchRadius] = useState(5);
   const [confirmedSearchRadius, setConfirmedSearchRadius] = useState(5);
+  const [sortOrder, setSortOrder] = useState('ASC');
+  const [sortBy, setSortBy] = useState('relevance');
+
+  const handleSortOrder = (input: string) => {
+    setSortOrder(input);
+  };
+
+  const handleSortBy = (input: string) => {
+    setSortBy(input);
+  };
+
   const { data: locationData } = useGetCurrentTimeZoneQuery({
     city: userLocation,
   });
@@ -68,6 +84,8 @@ const WeatherView = (props: WeatherViewProps) => {
       query: debouncedEventQuery,
       endDateRange: todayWithTZ.endDateRange,
       radius: confirmedSearchRadius,
+      sortOrder,
+      sortBy,
     },
     { skip: !locationData }
   );
@@ -113,7 +131,6 @@ const WeatherView = (props: WeatherViewProps) => {
   };
 
   const anchorRef = useRef(null);
-  const searchQueryFocusedRef = useRef<HTMLInputElement>(null);
 
   const handleInputFocus = () => {
     setIsInputFocused(true);
@@ -312,17 +329,47 @@ const WeatherView = (props: WeatherViewProps) => {
                           flexDirection: 'column',
                         }}
                       >
-                        <Typography>
-                          Radius from {userLocation} (miles)
-                        </Typography>
-                        <OutlinedInput
-                          fullWidth
-                          value={searchRadius}
-                          onChange={(ev) => {
-                            setSearchRadius(Number(ev.currentTarget.value));
-                          }}
-                          autoFocus
-                        />
+                        <Box sx={{ py: '.25rem' }}>
+                          <FormControl fullWidth>
+                            <InputLabel>
+                              Radius from {userLocation} (miles)
+                            </InputLabel>
+                            <OutlinedInput
+                              fullWidth
+                              label={` Radius from ${userLocation} (miles)`}
+                              value={searchRadius}
+                              onChange={(ev) => {
+                                setSearchRadius(Number(ev.currentTarget.value));
+                              }}
+                              autoFocus
+                            />
+                          </FormControl>
+                        </Box>
+                        <Box sx={{ mt: '.5rem' }}>
+                          <BasicSelect
+                            value={sortBy}
+                            label="Sort By"
+                            handleChange={handleSortBy}
+                            selectItems={[
+                              { title: 'Relevance', value: 'relevance' },
+                              { title: 'Time', value: 'datetime' },
+                            ]}
+                          />
+                        </Box>
+                        {sortBy === 'datetime' ? (
+                          <Box sx={{ mt: '.5rem' }}>
+                            <BasicSelect
+                              value={sortOrder}
+                              label="Sort Order"
+                              handleChange={handleSortOrder}
+                              selectItems={[
+                                { title: 'Soonest First', value: 'ASC' },
+                                { title: 'Latest First', value: 'DESC' },
+                              ]}
+                            />
+                          </Box>
+                        ) : null}
+
                         <Box sx={{ marginTop: '.5rem' }}>
                           <OutlinedInput
                             type="submit"

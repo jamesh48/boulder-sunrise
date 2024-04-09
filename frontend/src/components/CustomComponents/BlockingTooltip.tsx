@@ -50,7 +50,9 @@ const BlockingTooltip = ({
         >
           {({ TransitionProps }) => (
             <Fade {...TransitionProps} timeout={350}>
-              <Paper style={{ padding: '16px' }}>{children}</Paper>
+              <Paper style={{ padding: '1rem', width: '20rem' }}>
+                {children}
+              </Paper>
             </Fade>
           )}
         </Popper>

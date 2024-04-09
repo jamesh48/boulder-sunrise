@@ -48,10 +48,12 @@ const meetupApiSlice = createApi({
         query: string;
         endDateRange: string;
         radius: number;
+        sortOrder: string;
+        sortBy: string;
       }
     >({
       query: (options) => ({
-        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&endDateRange=${options.endDateRange}&radius=${options.radius}`,
+        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&endDateRange=${options.endDateRange}&radius=${options.radius}&sortBy=${options.sortBy}&sortOrder=${options.sortOrder}`,
       }),
     }),
   }),
