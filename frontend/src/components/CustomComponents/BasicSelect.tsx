@@ -23,8 +23,10 @@ export default function BasicSelect(props: BasicSelectProps) {
           sx={{ zIndex: 1600 }}
           MenuProps={{ style: { zIndex: 1650 } }}
         >
-          {props.selectItems.map((item) => (
-            <MenuItem value={item.value}>{item.title}</MenuItem>
+          {props.selectItems.map((item, index) => (
+            <MenuItem key={index} value={item.value}>
+              {item.title}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
