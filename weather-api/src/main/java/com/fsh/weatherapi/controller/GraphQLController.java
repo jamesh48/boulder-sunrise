@@ -20,7 +20,8 @@ public class GraphQLController {
     @RequestParam("lat") Double lat,
     @RequestParam("lon") Double lon,
     @RequestParam("query") String searchQuery,
-    @RequestParam("endDateRange") String endDateRange
+    @RequestParam("endDateRange") String endDateRange,
+     @RequestParam("radius") float radius
   ) {
     try {
       // Call the GraphQL service
@@ -29,7 +30,8 @@ public class GraphQLController {
         lat,
         lon,
         searchQuery,
-        endDateRange
+        endDateRange,
+        radius
       );
 
       // Handle response

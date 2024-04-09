@@ -1,14 +1,18 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
+import {
+  Close,
+  ExpandLessTwoTone,
+  ExpandMoreTwoTone,
+} from '@mui/icons-material';
 import {
   Box,
   Collapse,
   IconButton,
   Typography,
-  Chip,
   Skeleton,
+  OutlinedInput,
+  Chip,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -16,283 +20,35 @@ import {
   getUserLocation,
   toggleWeatherView,
   toggleStateSwitch,
-  accuateDisabledTraySwipe,
 } from '@/app/appSlice';
 import {
   useGetCurrentTimeZoneQuery,
   useGetCurrentWeatherQuery,
 } from '@/app/services/weatherApiSlice';
 import { SkeletonIndicators, WeatherIndicators } from './WeatherIndicators';
-import {
-  LocalEvent as LocalEventProps,
-  useGetCurrentMeetupsQuery,
-} from '@/app/services/meetupApiSlice';
-import HtmlTooltip from '../CustomComponents/HTMLTooltip';
-import useIsMobile from '@/app/customHooks/useIsMobile';
+import { useGetCurrentMeetupsQuery } from '@/app/services/meetupApiSlice';
 import { getTodayWithTZ } from '@/app/utils/getTodayWithTZ';
+import LocalEvent from './LocalEvent';
+import BlockingTooltip from '../CustomComponents/BlockingTooltip';
 
-interface LocalEventDescriptionProps {
-  formattedDateRange: string;
-  venue: { name: string; address: string } | undefined;
-  topics: { edges: { cursor: string; node: { name: string } }[] };
-  description: string;
-  scrollComponent: React.MutableRefObject<HTMLElement | undefined>;
-  scrollXComponent: React.MutableRefObject<HTMLElement | undefined>;
-}
-
-const LocalEventDescription = (props: LocalEventDescriptionProps) => {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        padding: '1rem',
-      }}
-    >
-      <Typography
-        className="Venue"
-        variant="h5"
-        sx={{
-          textDecoration: 'underline',
-          padding: '.5rem',
-          paddingBottom: 0,
-        }}
-      >
-        Venue: {props.venue?.name || props.venue?.address || 'See Event'}
-      </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          flex: 1,
-          alignItems: 'center',
-          paddingY: '.5rem',
-        }}
-      >
-        <Typography>{props.formattedDateRange}</Typography>
-      </Box>
-      <Box
-        sx={{
-          maxHeight: '15rem',
-          overflowY: 'auto',
-          border: '1px solid white',
-          borderRadius: '5px',
-          width: '100%',
-        }}
-        ref={props.scrollComponent}
-      >
-        <Typography sx={{ padding: '.25rem', display: 'flex', width: '100%' }}>
-          {props.description || 'No Description Provided'}
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          paddingTop: '1rem',
-          overflowX: 'auto',
-          '&::-webkit-scrollbar': {
-            display: 'none',
-          },
-          '-ms-overflow-style': 'none',
-          'scrollbar-width': 'none',
-        }}
-        ref={props.scrollXComponent}
-      >
-        {props.topics.edges.map((edge, idx) => (
-          <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
-            <Chip
-              label={edge.node.name}
-              variant="filled"
-              color="success"
-              sx={{ flex: 1, marginX: '.15rem' }}
-            />
-          </Box>
-        ))}
-      </Box>
-    </Box>
-  );
-};
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
 }
-
-interface LocalEventPropsWithRef extends LocalEventProps {
-  outerScrollComponent: React.MutableRefObject<HTMLDivElement | undefined>;
-  openIndex: number;
-  handleOpenIndex: (idx: number) => void;
-  eventOpen: boolean;
-  timezone: string | undefined;
-}
-
-const LocalEvent = (props: LocalEventPropsWithRef) => {
-  const theme = useTheme();
-  const dispatch = useDispatch();
-  const [open, setOpen] = useState(false);
-  const scrollComponent = useRef<HTMLElement>();
-  const scrollXComponent = useRef<HTMLElement>();
-  const activeEventRef = useRef<HTMLDivElement>();
-
-  const isMobile = useIsMobile();
-
-  const handleToolTipScroll = useCallback((e: WheelEvent) => {
-    scrollComponent.current?.scrollTo({
-      top: scrollComponent.current?.scrollTop + e.deltaY,
-      behavior: 'auto',
-    });
-
-    scrollXComponent.current?.scrollTo({
-      left: scrollXComponent.current?.scrollLeft + e.deltaX,
-      behavior: 'auto',
-    });
-  }, []);
-
-  useEffect(() => {
-    dispatch(accuateDisabledTraySwipe(open));
-  }, [open, dispatch]);
-
-  const cachedMouseWheelHandler = useMemo(
-    () => props.outerScrollComponent.current?.onwheel,
-    [props.outerScrollComponent]
-  );
-
-  useEffect(() => {
-    if (props.outerScrollComponent?.current) {
-      if (props.eventOpen) {
-        props.outerScrollComponent.current.onwheel = (e) => {
-          e.preventDefault();
-        };
-        window.addEventListener('wheel', handleToolTipScroll, true);
-      }
-      return () => {
-        window.removeEventListener('wheel', handleToolTipScroll, true);
-        if (props.outerScrollComponent.current) {
-          props.outerScrollComponent.current.onwheel = cachedMouseWheelHandler!;
-        }
-      };
-    }
-  }, [
-    props.eventOpen,
-    handleToolTipScroll,
-    props.outerScrollComponent,
-    cachedMouseWheelHandler,
-  ]);
-
-  const startDateTime = new Date(new Date(props.dateTime));
-
-  const endDateTime = new Date(props.endTime);
-
-  const formattedDateRange = `${startDateTime.toLocaleDateString(
-    'en-US'
-  )} ${startDateTime.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: props.timezone,
-  })} - ${endDateTime.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: props.timezone,
-  })}`;
-
-  return (
-    <HtmlTooltip
-      placement="right"
-      open={!isMobile && props.eventOpen}
-      description={
-        <LocalEventDescription
-          formattedDateRange={formattedDateRange}
-          venue={props.venue}
-          topics={props.topics}
-          description={props.description}
-          scrollComponent={scrollComponent}
-          scrollXComponent={scrollXComponent}
-        />
-      }
-      divOrSpan="div"
-      opacity={1}
-      backgroundColor={theme.palette.primary.main}
-      textColor="white"
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          cursor: 'pointer',
-          borderRadius: '1rem',
-          border: '1px solid black',
-          marginY: '1rem',
-        }}
-        ref={activeEventRef}
-        onClick={() => {
-          if (isMobile) {
-            props.handleOpenIndex(props.openIndex);
-            // Reset Scroll Position of Active Element after another one Closes
-            setTimeout(() => {
-              if (activeEventRef.current) {
-                activeEventRef.current.scrollIntoView({
-                  behavior: 'instant',
-                  block: 'start',
-                });
-              }
-            }, 0);
-          } else {
-            window.open(props.eventUrl);
-          }
-        }}
-        onMouseOver={() => {
-          if (!isMobile) {
-            props.handleOpenIndex(props.openIndex);
-          }
-        }}
-        onMouseLeave={() => {
-          if (!isMobile) {
-            props.handleOpenIndex(-1);
-          }
-        }}
-      >
-        <Typography
-          variant="h5"
-          sx={{ marginTop: '.5rem', textAlign: 'center' }}
-        >
-          {props.title}
-        </Typography>
-        <Box sx={{ margin: '.5rem' }}>
-          <Image
-            src={props.imageUrl}
-            width={100}
-            height={100}
-            alt={props.title}
-            layout="responsive"
-          />
-        </Box>
-        {isMobile ? (
-          <LocalEventDescription
-            formattedDateRange={formattedDateRange}
-            venue={props.venue}
-            topics={props.topics}
-            description={props.description}
-            scrollComponent={scrollComponent}
-            scrollXComponent={scrollXComponent}
-          />
-        ) : null}
-      </Box>
-    </HtmlTooltip>
-  );
-};
 
 const WeatherView = (props: WeatherViewProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const userLocation = useSelector(getUserLocation);
   const weatherView = useSelector(getWeatherView);
-
+  const [eventQuery, setEventQuery] = useState('party');
+  const [debouncedEventQuery, setDebouncedEventQuery] = useState('party');
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
+    null
+  );
+  const [searchAdditionalOptionsOpen, setSearchAdditionalOptionsOpen] =
+    useState(false);
+  const [searchRadius, setSearchRadius] = useState(5);
+  const [confirmedSearchRadius, setConfirmedSearchRadius] = useState(5);
   const { data: locationData } = useGetCurrentTimeZoneQuery({
     city: userLocation,
   });
@@ -308,8 +64,9 @@ const WeatherView = (props: WeatherViewProps) => {
     {
       lat: locationData?.lat,
       lon: locationData?.lng,
-      query: 'party',
+      query: debouncedEventQuery,
       endDateRange: todayWithTZ.endDateRange,
+      radius: confirmedSearchRadius,
     },
     { skip: !locationData }
   );
@@ -327,11 +84,34 @@ const WeatherView = (props: WeatherViewProps) => {
     }
   );
 
+  useEffect(() => {
+    if (searchAdditionalOptionsOpen) {
+      handleOpenIndex(-1);
+    }
+  }, [searchAdditionalOptionsOpen]);
+
+  useEffect(() => {
+    const debounceDelay = 1000;
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+    const timer = setTimeout(() => {
+      setDebouncedEventQuery(eventQuery);
+    }, debounceDelay);
+    setDebounceTimer(timer);
+
+    return () => {
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventQuery]);
+
   const [indexOpen, setIndexOpen] = useState(-1);
   const handleOpenIndex = (idx: number) => {
     setIndexOpen(idx);
   };
 
+  const anchorRef = useRef(null);
   return (
     <Box
       sx={{
@@ -398,10 +178,9 @@ const WeatherView = (props: WeatherViewProps) => {
           sx={{
             display: 'flex',
             flex: 1,
-            width: '100%',
-            height: '70%',
+            height: '100%',
             flexDirection: 'column',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             alignItems: 'center',
           }}
         >
@@ -422,32 +201,152 @@ const WeatherView = (props: WeatherViewProps) => {
             )}
           </Typography>
           <Box
-            ref={outerScrollComponent}
             sx={{
-              overflowY: 'scroll',
               display: 'flex',
               flexDirection: 'column',
+              alignItems: 'center',
+              height: '100%',
             }}
           >
-            {isLoadingMeetups || isFetchingMeetups ? (
-              <Skeleton />
-            ) : meetups?.edges?.length ? (
-              meetups.edges.map(({ node: { result } }, idx) => (
-                <LocalEvent
-                  timezone={locationData?.timezone}
-                  key={idx}
-                  openIndex={idx}
-                  outerScrollComponent={outerScrollComponent}
-                  handleOpenIndex={handleOpenIndex}
-                  eventOpen={indexOpen === idx}
-                  {...result}
-                />
-              ))
-            ) : (
-              <Box>
-                <Typography>~ No More Events Today ~</Typography>
-              </Box>
-            )}
+            <Box
+              sx={{
+                flex: 0.1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <OutlinedInput
+                sx={{ height: '2rem' }}
+                name="eventQuery"
+                value={eventQuery}
+                onChange={(ev) => setEventQuery(ev.currentTarget.value)}
+                placeholder="Event Search Query"
+                inputProps={{ sx: { textAlign: 'center' } }}
+              />
+              <Chip
+                label="Additional Search Options"
+                variant="filled"
+                onClick={() => setSearchAdditionalOptionsOpen(true)}
+                sx={{
+                  border: '.5px solid blue',
+                  mt: '.25rem',
+                  cursor: 'pointer',
+                }}
+                ref={anchorRef}
+              />
+              {eventQuery ? (
+                <BlockingTooltip
+                  open={searchAdditionalOptionsOpen}
+                  anchorRef={anchorRef}
+                >
+                  <Box sx={{ padding: '.5rem' }}>
+                    <Box
+                      sx={{
+                        width: '100%',
+                        borderBottom: '1px solid black',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        mb: '.5rem',
+                      }}
+                    >
+                      <Close
+                        onClick={() => setSearchAdditionalOptionsOpen(false)}
+                      />
+                    </Box>
+                    <form
+                      onSubmit={(ev) => {
+                        ev.preventDefault();
+                        setSearchAdditionalOptionsOpen(false);
+                        setConfirmedSearchRadius(searchRadius);
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        <Typography>
+                          Radius from {userLocation} (miles)
+                        </Typography>
+                        <OutlinedInput
+                          fullWidth
+                          value={searchRadius}
+                          onChange={(ev) => {
+                            setSearchRadius(Number(ev.currentTarget.value));
+                          }}
+                          autoFocus
+                        />
+                        <Box sx={{ marginTop: '.5rem' }}>
+                          <OutlinedInput
+                            type="submit"
+                            value="Ok"
+                            fullWidth
+                            inputProps={{ sx: { cursor: 'pointer' } }}
+                          />
+                        </Box>
+                      </Box>
+                    </form>
+                  </Box>
+                </BlockingTooltip>
+              ) : null}
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                overflowY: 'auto',
+                height: '75%',
+                width: '100%',
+                alignItems: 'center',
+              }}
+              ref={outerScrollComponent}
+            >
+              {isLoadingMeetups || isFetchingMeetups ? (
+                <Box>
+                  <Box sx={{ mt: '1rem' }}>
+                    <Skeleton variant="rectangular" width={400} height={250} />
+                  </Box>
+                  <Box sx={{ mt: '1rem' }}>
+                    <Skeleton variant="rectangular" width={400} height={250} />
+                  </Box>
+                  <Box sx={{ mt: '1rem' }}>
+                    <Skeleton variant="rectangular" width={400} height={250} />
+                  </Box>
+                </Box>
+              ) : meetups?.edges?.length ? (
+                meetups.edges.map(({ node: { result } }, idx) => (
+                  // Leave this box wrapper or the events jump upwards when being hovered on
+                  <Box key={idx}>
+                    <LocalEvent
+                      timezone={locationData?.timezone}
+                      openIndex={idx}
+                      outerScrollComponent={outerScrollComponent}
+                      handleOpenIndex={handleOpenIndex}
+                      eventOpen={indexOpen === idx}
+                      searchAdditionalOptionsOpen={searchAdditionalOptionsOpen}
+                      {...result}
+                    />
+                  </Box>
+                ))
+              ) : (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%',
+                  }}
+                >
+                  <Typography>
+                    {debouncedEventQuery
+                      ? '~ No More Events Today ~'
+                      : '^^ Search for Events ^^'}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
           </Box>
         </Box>
       </Collapse>

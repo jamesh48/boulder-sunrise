@@ -69,7 +69,8 @@ public class GraphQLService {
     Double lat,
     Double lon,
     String searchQuery,
-    String endDateRange
+    String endDateRange,
+    Float radius
   ) throws IOException {
     GraphQLTemplate graphQLTemplate = new GraphQLTemplate();
 
@@ -81,6 +82,7 @@ public class GraphQLService {
       .put("query", searchQuery)
       .put("eventType", EventType.PHYSICAL)
       .put("endDateRange", endDateRange)
+      .put("radius", radius)
       .build();
 
     GraphQLRequestEntity requestEntity = GraphQLRequestEntity

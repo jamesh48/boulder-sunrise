@@ -11,6 +11,9 @@ import {
 } from '../icons';
 import { CurrentWeather } from '@/app/services/types';
 import HtmlTooltip from '../CustomComponents/HTMLTooltip';
+import { getWeatherView } from '@/app/appSlice';
+import { useSelector } from 'react-redux';
+import useIsMobile from '@/app/customHooks/useIsMobile';
 
 interface WeatherIconContainerProps {
   timeZone: string | undefined;
@@ -46,10 +49,11 @@ const weatherIconMap = {
 export default function WeatherIconContainer(props: WeatherIconContainerProps) {
   const theme = useTheme();
   const ind = props.isMoonTime ? 'night' : 'day';
-
   const localDateTime = moment.utc(props.timestamp).tz(props.timeZone!);
-
+  const weatherView = useSelector(getWeatherView);
   const formattedTime = localDateTime.format('h:mm:ss A');
+  const isMobile = useIsMobile();
+  const mobileWeatherView = isMobile && weatherView;
 
   return (
     <Box
@@ -64,7 +68,7 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
       <HtmlTooltip
         description={formattedTime}
         divOrSpan="div"
-        open={!!props.timeZone}
+        open={!!props.timeZone && !mobileWeatherView}
         placement="right"
         borderColor={props.isMoonTime ? 'white' : 'black'}
         textColor={props.isMoonTime ? 'white' : 'black'}
