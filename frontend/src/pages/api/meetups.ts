@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } = req.query;
   const endpoint = (() => {
     if (process.env.NODE_ENV === 'production') {
-      return `https://data.bertramcappuccino.com/meetups?query=${query}&lat=${lat}&lon=${lon}&endDateRange=${endDateRange}&radius=${radius}`;
+      return `https://data.bertramcappuccino.com/meetups?query=${query}&lat=${lat}&lon=${lon}&endDateRange=${endDateRange}&radius=${radius}&keywordSortField=${keywordSortField}`;
     }
     return `http://localhost:8080/meetups?query=${query}&lat=${lat}&lon=${lon}&endDateRange=${endDateRange}&radius=${radius}&keywordSortField=${keywordSortField}`;
   })();
