@@ -1,8 +1,9 @@
+import { Venue } from '@/app/services/meetupApiSlice';
 import { Box, Chip, Typography } from '@mui/material';
 
 interface LocalEventDescriptionProps {
   formattedDateRange: string;
-  venue: { name: string; address: string } | undefined;
+  venue: Venue | undefined;
   topics: { edges: { cursor: string; node: { name: string } }[] };
   description: string;
   scrollComponent: React.MutableRefObject<HTMLElement | undefined>;
@@ -21,26 +22,46 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
         padding: '1rem',
       }}
     >
-      <Typography
-        className="Venue"
-        variant="h5"
-        sx={{
-          textDecoration: 'underline',
-          padding: '.5rem',
-          paddingBottom: 0,
-        }}
-      >
-        Venue: {props.venue?.name || props.venue?.address || 'See Event'}
-      </Typography>
+      {props.venue?.address ? (
+        <Box>
+          <Typography
+            className="Venue"
+            variant="h5"
+            sx={{
+              textDecoration: 'underline',
+              padding: '.5rem',
+              paddingBottom: 0,
+            }}
+          >
+            Venue: {props.venue?.name}
+          </Typography>
+          <Box>
+            <Typography
+              className="address1"
+              variant="h6"
+              sx={{ marginBottom: 0 }}
+            >
+              {props.venue.address}
+            </Typography>
+            <Typography
+              className="address2"
+              variant="h6"
+              sx={{ marginBottom: 0 }}
+            >
+              {props.venue.city}, {props.venue.state} {props.venue.postalCode}
+            </Typography>
+          </Box>
+        </Box>
+      ) : null}
       <Box
         sx={{
           display: 'flex',
           flex: 1,
           alignItems: 'center',
-          paddingY: '.5rem',
+          paddingBottom: '.5rem',
         }}
       >
-        <Typography>{props.formattedDateRange}</Typography>
+        <Typography variant="h6">{props.formattedDateRange}</Typography>
       </Box>
       <Box
         sx={{
@@ -57,6 +78,8 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
             padding: '.25rem',
             display: 'flex',
             overflowWrap: 'anywhere',
+            textAlign: 'center',
+            justifyContent: 'center',
           }}
         >
           {props.description || 'No Description Provided'}

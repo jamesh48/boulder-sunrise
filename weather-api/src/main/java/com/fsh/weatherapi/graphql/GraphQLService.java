@@ -56,6 +56,9 @@ public class GraphQLService {
     "            venue {\n" +
     "              name\n" +
     "              address\n" +
+    "              city\n" +
+    "              state\n" +
+    "              postalCode\n" +
     "            }\n" +
     "          }\n" +
     "        }\n" +

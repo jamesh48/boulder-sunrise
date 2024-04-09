@@ -38,6 +38,7 @@ interface WeatherViewProps {
 const WeatherView = (props: WeatherViewProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const userLocation = useSelector(getUserLocation);
   const weatherView = useSelector(getWeatherView);
   const [eventQuery, setEventQuery] = useState('party');
@@ -112,6 +113,16 @@ const WeatherView = (props: WeatherViewProps) => {
   };
 
   const anchorRef = useRef(null);
+  const searchQueryFocusedRef = useRef<HTMLInputElement>(null);
+
+  const handleInputFocus = () => {
+    setIsInputFocused(true);
+  };
+
+  const handleInputBlur = () => {
+    setIsInputFocused(false);
+  };
+
   return (
     <Box
       sx={{
@@ -152,6 +163,22 @@ const WeatherView = (props: WeatherViewProps) => {
             },
           }}
         >
+          {isInputFocused ? (
+            <Box
+              sx={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                zIndex: 1500,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
+          ) : null}
           <Typography
             variant="h6"
             sx={{
@@ -167,7 +194,6 @@ const WeatherView = (props: WeatherViewProps) => {
               <Skeleton />
             )}
           </Typography>
-
           {isLoadingWeather || isFetchingWeather ? (
             <SkeletonIndicators />
           ) : weatherReport ? (
@@ -217,24 +243,41 @@ const WeatherView = (props: WeatherViewProps) => {
               }}
             >
               <OutlinedInput
-                sx={{ height: '2rem' }}
+                sx={{
+                  height: '2rem',
+                  ...(() => {
+                    if (searchAdditionalOptionsOpen) {
+                      return { pointerEvents: 'none' };
+                    }
+                    if (isInputFocused) {
+                      return { bgcolor: 'white', zIndex: 1500 };
+                    }
+                    return {};
+                  })(),
+                }}
                 name="eventQuery"
                 value={eventQuery}
                 onChange={(ev) => setEventQuery(ev.currentTarget.value)}
                 placeholder="Event Search Query"
-                inputProps={{ sx: { textAlign: 'center' } }}
-              />
-              <Chip
-                label="Additional Search Options"
-                variant="filled"
-                onClick={() => setSearchAdditionalOptionsOpen(true)}
-                sx={{
-                  border: '.5px solid blue',
-                  mt: '.25rem',
-                  cursor: 'pointer',
+                inputProps={{
+                  sx: { textAlign: 'center', zIndex: 1502 },
                 }}
-                ref={anchorRef}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
               />
+              {debouncedEventQuery ? (
+                <Chip
+                  label="Additional Search Options"
+                  variant="filled"
+                  onClick={() => setSearchAdditionalOptionsOpen(true)}
+                  sx={{
+                    border: '.5px solid blue',
+                    mt: '.25rem',
+                    cursor: 'pointer',
+                  }}
+                  ref={anchorRef}
+                />
+              ) : null}
               {eventQuery ? (
                 <BlockingTooltip
                   open={searchAdditionalOptionsOpen}
@@ -252,6 +295,7 @@ const WeatherView = (props: WeatherViewProps) => {
                     >
                       <Close
                         onClick={() => setSearchAdditionalOptionsOpen(false)}
+                        sx={{ cursor: 'pointer' }}
                       />
                     </Box>
                     <form
@@ -325,7 +369,7 @@ const WeatherView = (props: WeatherViewProps) => {
                       openIndex={idx}
                       outerScrollComponent={outerScrollComponent}
                       handleOpenIndex={handleOpenIndex}
-                      eventOpen={indexOpen === idx}
+                      eventOpen={indexOpen === idx && !isInputFocused}
                       searchAdditionalOptionsOpen={searchAdditionalOptionsOpen}
                       {...result}
                     />

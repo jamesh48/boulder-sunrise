@@ -1,5 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+export interface Venue {
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+}
 export interface LocalEvent {
   title: string;
   imageUrl: string;
@@ -15,10 +22,7 @@ export interface LocalEvent {
     count: number;
     edges: { cursor: string; node: { name: string } }[];
   };
-  venue?: {
-    name: string;
-    address: string;
-  };
+  venue?: Venue;
 }
 
 interface MeetupResponse {
