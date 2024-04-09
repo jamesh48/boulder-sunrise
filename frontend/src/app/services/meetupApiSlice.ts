@@ -53,7 +53,7 @@ const meetupApiSlice = createApi({
       }
     >({
       query: (options) => ({
-        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&endDateRange=${options.endDateRange}&radius=${options.radius}&sortBy=${options.sortBy}&sortOrder=${options.sortOrder}`,
+        url: `/meetups?lat=${options.lat}&lon=${options.lon}&query=${options.query}&endDateRange=${options.endDateRange}&radius=${options.radius}&keywordSortField=${options.sortBy}&sortOrder=${options.sortOrder}`,
       }),
     }),
   }),

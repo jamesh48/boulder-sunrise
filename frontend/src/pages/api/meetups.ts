@@ -11,25 +11,7 @@ interface MeetupResponse {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const {
-    query,
-    lat,
-    lon,
-    endDateRange,
-    radius,
-    sortBy: keywordSortField,
-    sortOrder,
-  } = req.query;
-
-  const params = {
-    query,
-    lat,
-    lon,
-    endDateRange,
-    radius,
-    keywordSortField,
-  } as { [key: string]: string };
-
+  const { sortOrder, ...params } = req.query as { [key: string]: string };
   const queryString = Object.keys(params)
     .map(
       (key) => encodeURIComponent(key) + '=' + encodeURIComponent(params[key])
