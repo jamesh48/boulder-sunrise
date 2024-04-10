@@ -128,7 +128,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
           borderRadius: '1rem',
           border: '1px solid ' + theme.palette.primary.main,
           marginBottom: '1rem',
-          marginRight: '1rem',
+          marginX: '.5rem',
         }}
         ref={activeEventRef}
         onClick={() => {

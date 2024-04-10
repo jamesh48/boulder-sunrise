@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Popper, Tooltip, TooltipProps } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { Box, Popper, Tooltip, TooltipProps } from '@mui/material';
 import { getStateSwitch } from '@/app/appSlice';
 
 interface HtmlTooltipProps {
@@ -98,7 +98,10 @@ const HtmlTooltip = ({
   );
 };
 const MemoizedTooltip = React.memo(HtmlTooltip, (prevProps, nextProps) => {
-  return prevProps.description === nextProps.description;
+  return (
+    prevProps.description === nextProps.description &&
+    prevProps.open === nextProps.open
+  );
 });
 
 export default MemoizedTooltip;

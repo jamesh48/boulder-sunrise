@@ -22,6 +22,7 @@ import {
   getUserLocation,
   toggleWeatherView,
   toggleStateSwitch,
+  getUserView,
 } from '@/app/appSlice';
 import {
   useGetCurrentTimeZoneQuery,
@@ -36,6 +37,7 @@ import BasicSelect from '../CustomComponents/BasicSelect';
 import useSortOrder from '@/app/customHooks/useSortOrder';
 import useSearchRadius from '@/app/customHooks/useSearchRadius';
 import useSortBy from '@/app/customHooks/useSortBy';
+import useIsMobile from '@/app/customHooks/useIsMobile';
 
 interface WeatherViewProps {
   dataContainerRef: React.MutableRefObject<HTMLDivElement | undefined>;
@@ -44,6 +46,8 @@ interface WeatherViewProps {
 const WeatherView = (props: WeatherViewProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const isMobile = useIsMobile();
+  const userView = useSelector(getUserView);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const userLocation = useSelector(getUserLocation);
   const weatherView = useSelector(getWeatherView);
@@ -173,9 +177,15 @@ const WeatherView = (props: WeatherViewProps) => {
     <Box
       sx={{
         display: 'flex',
-        flex: weatherView ? 0.25 : 0,
+        flex: (() => {
+          if (!weatherView) {
+            return 0;
+          }
+          return isMobile ? 'unset' : 0.5;
+        })(),
         alignItems: 'center',
         height: '100%',
+        width: '100%',
         justifyContent: 'center',
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
@@ -432,7 +442,7 @@ const WeatherView = (props: WeatherViewProps) => {
                 display: 'flex',
                 flexDirection: 'column',
                 overflowY: 'auto',
-                height: '50%',
+                height: '50vh',
                 width: '100%',
                 alignItems: 'center',
               }}
@@ -487,9 +497,10 @@ const WeatherView = (props: WeatherViewProps) => {
       <Box
         sx={{
           borderLeft: `3px solid ${theme.palette.primary.main}`,
-          height: '100%',
+          height: '100vh',
           display: 'flex',
           alignItems: 'center',
+          width: isMobile && userView ? 0 : 'unset',
         }}
       >
         <IconButton

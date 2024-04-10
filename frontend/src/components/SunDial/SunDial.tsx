@@ -1,15 +1,22 @@
 import { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { Box, useTheme } from '@mui/material';
 import { WeatherReport } from '@/app/services/types';
 import { constructLocalDate, useCurrentPlacements } from '@/app/customHooks';
 import TimeMarkers from './TimeMarkers';
-import { getUserLocation } from '@/app/appSlice';
+import {
+  getShowSunDial,
+  getUserLocation,
+  getUserView,
+  getWeatherView,
+  setShowSunDial,
+} from '@/app/appSlice';
 import {
   useGetCurrentTimeZoneQuery,
   useGetCurrentWeatherQuery,
 } from '@/app/services/weatherApiSlice';
+import useIsMobile from '@/app/customHooks/useIsMobile';
 import WeatherIconContainer from './WeatherIconContainer';
 import SunriseSunset from './SunriseSunset';
 
@@ -21,7 +28,12 @@ interface SunDialProps {
 
 const SunDial = (props: SunDialProps) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const isMobile = useIsMobile();
   const userLocation = useSelector(getUserLocation);
+  const weatherView = useSelector(getWeatherView);
+  const userView = useSelector(getUserView);
+  const showSunDial = useSelector(getShowSunDial);
 
   const { data: weatherReport } = useGetCurrentWeatherQuery(
     {
@@ -94,6 +106,10 @@ const SunDial = (props: SunDialProps) => {
     isMoonTime,
   ]);
 
+  useEffect(() => {
+    dispatch(setShowSunDial(!((weatherView || userView) && isMobile)));
+  }, [weatherView, userView, isMobile, dispatch]);
+
   return (
     <Box
       sx={{
@@ -105,14 +121,16 @@ const SunDial = (props: SunDialProps) => {
         display: 'flex',
       }}
     >
-      <TimeMarkers
-        sunset={sunset}
-        sunrise={sunrise}
-        sunrisePercentage={sunrisePercentage}
-        sunsetPercentage={sunsetPercentage}
-        timeZoneLoaded={!!locationData?.timezone}
-        isLoggedIn={props.isLoggedIn}
-      />
+      {showSunDial ? (
+        <TimeMarkers
+          sunset={sunset}
+          sunrise={sunrise}
+          sunrisePercentage={sunrisePercentage}
+          sunsetPercentage={sunsetPercentage}
+          timeZoneLoaded={!!locationData?.timezone}
+          isLoggedIn={props.isLoggedIn}
+        />
+      ) : null}
       <Box
         sx={{
           display: 'flex',

@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { Box, useTheme } from '@mui/material';
 import moment from 'moment';
 import {
@@ -11,9 +12,7 @@ import {
 } from '../icons';
 import { CurrentWeather } from '@/app/services/types';
 import HtmlTooltip from '../CustomComponents/HTMLTooltip';
-import { getWeatherView } from '@/app/appSlice';
-import { useSelector } from 'react-redux';
-import useIsMobile from '@/app/customHooks/useIsMobile';
+import { getShowSunDial } from '@/app/appSlice';
 
 interface WeatherIconContainerProps {
   timeZone: string | undefined;
@@ -50,11 +49,8 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
   const theme = useTheme();
   const ind = props.isMoonTime ? 'night' : 'day';
   const localDateTime = moment.utc(props.timestamp).tz(props.timeZone!);
-  const weatherView = useSelector(getWeatherView);
   const formattedTime = localDateTime.format('h:mm:ss A');
-  const isMobile = useIsMobile();
-  const mobileWeatherView = isMobile && weatherView;
-
+  const showSunDial = useSelector(getShowSunDial);
   return (
     <Box
       ref={props.sunContainerRef}
@@ -68,7 +64,7 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
       <HtmlTooltip
         description={formattedTime}
         divOrSpan="div"
-        open={!!props.timeZone && !mobileWeatherView}
+        open={!!props.timeZone && showSunDial}
         placement="right"
         borderColor={props.isMoonTime ? 'white' : 'black'}
         textColor={props.isMoonTime ? 'white' : 'black'}
@@ -76,7 +72,13 @@ export default function WeatherIconContainer(props: WeatherIconContainerProps) {
           props.isMoonTime ? theme.palette.primary.light : 'yellow'
         }
       >
-        <Box>{weatherIconMap[props.currentWeather][ind]}</Box>
+        <Box
+          sx={{
+            opacity: showSunDial ? 1 : 0,
+          }}
+        >
+          {weatherIconMap[props.currentWeather][ind]}
+        </Box>
       </HtmlTooltip>
     </Box>
   );

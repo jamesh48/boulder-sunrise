@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Formik, Form } from 'formik';
 import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import {
   Box,
@@ -11,7 +12,6 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import states from 'us-state-codes';
-import { Formik, Form } from 'formik';
 import {
   getUserLocation,
   getUserView,
@@ -19,13 +19,17 @@ import {
   toggleWeatherView,
   toggleUserView,
   toggleStateSwitch,
+  getWeatherView,
 } from '@/app/appSlice';
+import useIsMobile from '@/app/customHooks/useIsMobile';
 
 interface UserPreferencesProps {}
 
 const UserPreferences = (_props: UserPreferencesProps) => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const isMobile = useIsMobile();
+  const weatherView = useSelector(getWeatherView);
   const [validState, setValidState] = useState('');
   const userView = useSelector(getUserView);
   const [defaultCity, defaultState] = useSelector(getUserLocation).split(',');
@@ -34,9 +38,14 @@ const UserPreferences = (_props: UserPreferencesProps) => {
     <Box
       sx={{
         display: 'flex',
-        flex: userView ? 0.25 : 0,
+        flex: (() => {
+          if (!userView) {
+            return 0;
+          }
+          return isMobile ? 'unset' : 0.5;
+        })(),
+        width: '100%',
         alignItems: 'center',
-        height: '100%',
         justifyContent: 'center',
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
@@ -45,9 +54,10 @@ const UserPreferences = (_props: UserPreferencesProps) => {
       <Box
         sx={{
           borderRight: `3px solid ${theme.palette.primary.main}`,
-          height: '100%',
+          height: '100vh',
           display: 'flex',
           alignItems: 'center',
+          width: isMobile && weatherView ? 0 : 'unset',
         }}
       >
         <IconButton

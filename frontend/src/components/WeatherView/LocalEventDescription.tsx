@@ -1,5 +1,6 @@
-import { TopicEdge, Venue } from '../../shared/types';
 import { Box, Chip, Typography } from '@mui/material';
+import useIsMobile from '@/app/customHooks/useIsMobile';
+import { TopicEdge, Venue } from '../../shared/types';
 
 interface LocalEventDescriptionProps {
   formattedDateRange: string;
@@ -11,6 +12,14 @@ interface LocalEventDescriptionProps {
 }
 
 const LocalEventDescription = (props: LocalEventDescriptionProps) => {
+  const isMobile = useIsMobile();
+  const topics = (() => {
+    if (isMobile) {
+      return props.topics.edges.slice(0, 3);
+    }
+    return props.topics.edges;
+  })();
+
   return (
     <Box
       sx={{
@@ -69,7 +78,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
           overflowY: 'auto',
           border: '1px solid white',
           borderRadius: '5px',
-          width: '100%',
+          width: isMobile ? '20rem' : '100%',
         }}
         ref={props.scrollComponent}
       >
@@ -80,6 +89,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
             overflowWrap: 'anywhere',
             textAlign: 'center',
             justifyContent: 'center',
+            width: isMobile ? 'unset' : '100%',
           }}
         >
           {props.description || 'No Description Provided'}
@@ -100,7 +110,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
         }}
         ref={props.scrollXComponent}
       >
-        {props.topics.edges.map((edge, idx) => (
+        {topics.map((edge, idx) => (
           <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
             <Chip
               label={edge.node.name}

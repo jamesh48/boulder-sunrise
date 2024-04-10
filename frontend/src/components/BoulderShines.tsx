@@ -81,8 +81,8 @@ const BoulderShines = () => {
         <Box
           sx={{
             display: 'flex',
-            height: '100vh',
             overflowY: 'hidden',
+            overflowX: 'hidden',
           }}
         >
           <WeatherView dataContainerRef={dataContainerRef} />

@@ -8,6 +8,7 @@ export const appInitialState: {
   userView: boolean;
   stateSwitch: boolean;
   disabledTraySwipe: boolean;
+  showSunDial: boolean;
 } = {
   userLocation: '',
   nodeEnv: 'production',
@@ -15,6 +16,7 @@ export const appInitialState: {
   userView: false,
   stateSwitch: false,
   disabledTraySwipe: false,
+  showSunDial: true,
 };
 
 export const appSlice = createSlice({
@@ -23,6 +25,9 @@ export const appSlice = createSlice({
   reducers: {
     setUserLocation: (state, action: PayloadAction<string>) => {
       state.userLocation = action.payload;
+    },
+    setShowSunDial: (state, action: PayloadAction<boolean>) => {
+      state.showSunDial = action.payload;
     },
     toggleWeatherView: (state) => {
       state.weatherView = !state.weatherView;
@@ -51,8 +56,10 @@ export const {
   toggleUserView,
   toggleStateSwitch,
   accuateDisabledTraySwipe,
+  setShowSunDial,
 } = appSlice.actions;
 
+export const getShowSunDial = (state: RootState) => state.app.showSunDial;
 export const getStateSwitch = (state: RootState) => state.app.stateSwitch;
 export const getUserLocation = (state: RootState) => state.app.userLocation;
 export const getWeatherView = (state: RootState) => state.app.weatherView;
