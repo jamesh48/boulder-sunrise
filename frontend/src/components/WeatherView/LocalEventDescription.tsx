@@ -74,22 +74,24 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
       </Box>
       <Box
         sx={{
+          display: 'flex',
+          justifyContent: 'center',
           maxHeight: '15rem',
           overflowY: 'auto',
           border: '1px solid white',
           borderRadius: '5px',
-          width: isMobile ? '20rem' : '100%',
+          width: isMobile ? '17.5rem' : '100%',
         }}
         ref={props.scrollComponent}
       >
         <Typography
           sx={{
-            padding: '.5rem',
             display: 'flex',
-            overflowWrap: 'anywhere',
             textAlign: 'center',
             justifyContent: 'center',
-            width: isMobile ? 'unset' : '100%',
+            width: '100%',
+            padding: '.5rem',
+            overflowWrap: 'anywhere',
           }}
         >
           {props.description || 'No Description Provided'}
@@ -111,7 +113,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
         ref={props.scrollXComponent}
       >
         {topics.map((edge, idx) => (
-          <Box key={idx} sx={{ display: 'flex', width: '75%' }}>
+          <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
             <Chip
               label={edge.node.name}
               variant="filled"
