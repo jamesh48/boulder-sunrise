@@ -451,19 +451,24 @@ const WeatherView = (props: WeatherViewProps) => {
               {isLoadingMeetups || isFetchingMeetups ? (
                 <Box>
                   <Box sx={{ mt: '1rem' }}>
-                    <Skeleton variant="rectangular" width={400} height={250} />
+                    <Skeleton variant="rectangular" width={300} height={250} />
                   </Box>
                   <Box sx={{ mt: '1rem' }}>
-                    <Skeleton variant="rectangular" width={400} height={250} />
+                    <Skeleton variant="rectangular" width={300} height={250} />
                   </Box>
                   <Box sx={{ mt: '1rem' }}>
-                    <Skeleton variant="rectangular" width={400} height={250} />
+                    <Skeleton variant="rectangular" width={300} height={250} />
                   </Box>
                 </Box>
               ) : meetups?.edges?.length ? (
                 meetups.edges.map(({ node: { result } }, idx) => (
                   // Leave this box wrapper or the events jump upwards when being hovered on
-                  <Box key={idx} sx={{ width: '90%' }}>
+                  <Box
+                    key={idx}
+                    sx={{
+                      width: '20rem',
+                    }}
+                  >
                     <LocalEvent
                       timezone={locationData?.timezone}
                       openIndex={idx}

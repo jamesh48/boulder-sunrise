@@ -84,7 +84,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
       >
         <Typography
           sx={{
-            padding: '.25rem',
+            padding: '.5rem',
             display: 'flex',
             overflowWrap: 'anywhere',
             textAlign: 'center',
@@ -98,7 +98,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
 
       <Box
         sx={{
-          width: '100%',
+          width: isMobile ? '75%' : '100%',
           display: 'flex',
           paddingTop: '1rem',
           overflowX: 'auto',
@@ -111,7 +111,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
         ref={props.scrollXComponent}
       >
         {topics.map((edge, idx) => (
-          <Box key={idx} sx={{ display: 'flex', width: '100%' }}>
+          <Box key={idx} sx={{ display: 'flex', width: '75%' }}>
             <Chip
               label={edge.node.name}
               variant="filled"
