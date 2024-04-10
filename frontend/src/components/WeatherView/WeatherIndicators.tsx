@@ -40,10 +40,13 @@ export const SkeletonIndicators = () => {
   return (
     <Box sx={{ textAlign: 'center' }}>
       <SkeletonIndicator title="Current Temp: " />
-      <SkeletonIndicator title="High: " />
-      <SkeletonIndicator title="Low: " />
+      <Box>
+        <SkeletonIndicator title="High: " />
+        <Typography sx={{ marginX: '.5rem' }}>|</Typography>
+        <SkeletonIndicator title="Low: " />
+      </Box>
       <SkeletonIndicator title="Humidity: " />
-      <SkeletonIndicator title="Pressure: " />
+      {/* <SkeletonIndicator title="Pressure: " /> */}
       <SkeletonIndicator title="Cloudiness: " />
       <SkeletonIndicator title="Wind Speed: " />
     </Box>
@@ -61,26 +64,29 @@ export const WeatherIndicators = (props: WeatherIndicatorsProps) => (
       value={props.weatherReport.main.temp.toString()}
       additional="°F"
     />
-    <WeatherIndicator
-      title="High: "
-      value={props.weatherReport.main.temp_max.toString()}
-      additional="°F"
-    />
-    <WeatherIndicator
-      title="Low: "
-      value={props.weatherReport.main.temp_min.toString()}
-      additional="°F"
-    />
+    <Box sx={{ display: 'flex' }}>
+      <WeatherIndicator
+        title="Low: "
+        value={props.weatherReport.main.temp_min.toString()}
+        additional="°F"
+      />
+      <Typography sx={{ marginX: '.5rem' }}>|</Typography>
+      <WeatherIndicator
+        title="High: "
+        value={props.weatherReport.main.temp_max.toString()}
+        additional="°F"
+      />
+    </Box>
     <WeatherIndicator
       title="Humidity: "
       value={props.weatherReport.main.humidity.toString()}
       additional="%"
     />
-    <WeatherIndicator
+    {/* <WeatherIndicator
       title="Pressure: "
       value={props.weatherReport.main.pressure.toString()}
       additional=" hPa"
-    />
+    /> */}
     <WeatherIndicator
       title="Cloudiness: "
       value={props.weatherReport.clouds.all.toString()}

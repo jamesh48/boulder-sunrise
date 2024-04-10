@@ -463,7 +463,7 @@ const WeatherView = (props: WeatherViewProps) => {
               ) : meetups?.edges?.length ? (
                 meetups.edges.map(({ node: { result } }, idx) => (
                   // Leave this box wrapper or the events jump upwards when being hovered on
-                  <Box key={idx} sx={{ width: '100%' }}>
+                  <Box key={idx} sx={{ width: '90%' }}>
                     <LocalEvent
                       timezone={locationData?.timezone}
                       openIndex={idx}
