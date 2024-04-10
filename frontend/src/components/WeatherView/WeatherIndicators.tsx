@@ -40,7 +40,7 @@ export const SkeletonIndicators = () => {
   return (
     <Box sx={{ textAlign: 'center' }}>
       <SkeletonIndicator title="Current Temp: " />
-      <Box>
+      <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
         <SkeletonIndicator title="High: " />
         <Typography sx={{ marginX: '.5rem' }}>|</Typography>
         <SkeletonIndicator title="Low: " />
@@ -64,7 +64,7 @@ export const WeatherIndicators = (props: WeatherIndicatorsProps) => (
       value={props.weatherReport.main.temp.toString()}
       additional="°F"
     />
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
       <WeatherIndicator
         title="Low: "
         value={props.weatherReport.main.temp_min.toString()}
