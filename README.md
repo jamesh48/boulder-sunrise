@@ -1,4 +1,3 @@
 # Boulder-Shines
 
-- Currently deployed at
-  `https://www.bertramcappuccino.com`
+- Currently deployed [here](https://www.bertramcappuccino.com)
