@@ -10,6 +10,7 @@ import MemoizedTooltip from '../CustomComponents/HTMLTooltip';
 
 interface LocalEventPropsWithRef extends LocalEventProps {
   outerScrollComponent: React.MutableRefObject<HTMLDivElement | undefined>;
+  currentIndex: number;
   openIndex: number;
   handleOpenIndex: (idx: number) => void;
   eventOpen: boolean;
@@ -89,7 +90,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
 
   const handleOpenTooltip = useCallback(() => {
     if (!isMobile && !props.searchAdditionalOptionsOpen) {
-      props.handleOpenIndex(props.openIndex);
+      props.handleOpenIndex(props.currentIndex);
     }
   }, [isMobile, props]);
 
@@ -111,6 +112,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
           description={props.description}
           scrollComponent={scrollComponent}
           scrollXComponent={scrollXComponent}
+          eventUrl={props.eventUrl}
         />
       }
       divOrSpan="div"
@@ -133,16 +135,19 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
         ref={activeEventRef}
         onClick={() => {
           if (isMobile) {
-            props.handleOpenIndex(props.openIndex);
-            // Reset Scroll Position of Active Element after another one Closes
-            setTimeout(() => {
-              if (activeEventRef.current) {
-                activeEventRef.current.scrollIntoView({
-                  behavior: 'instant',
-                  block: 'start',
-                });
-              }
-            }, 0);
+            // Don't refocus event if its already open
+            if (props.openIndex !== props.currentIndex) {
+              props.handleOpenIndex(props.currentIndex);
+              // Reset Scroll Position of Active Element after another one Closes
+              setTimeout(() => {
+                if (activeEventRef.current) {
+                  activeEventRef.current.scrollIntoView({
+                    behavior: 'instant',
+                    block: 'start',
+                  });
+                }
+              }, 0);
+            }
           } else {
             window.open(props.eventUrl);
           }
@@ -173,6 +178,7 @@ const LocalEvent = (props: LocalEventPropsWithRef) => {
             description={props.description}
             scrollComponent={scrollComponent}
             scrollXComponent={scrollXComponent}
+            eventUrl={props.eventUrl}
           />
         ) : null}
       </Box>

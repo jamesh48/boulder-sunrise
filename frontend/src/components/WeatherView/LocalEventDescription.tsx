@@ -1,4 +1,4 @@
-import { Box, Chip, Typography } from '@mui/material';
+import { Box, Chip, OutlinedInput, Typography, useTheme } from '@mui/material';
 import useIsMobile from '@/app/customHooks/useIsMobile';
 import { TopicEdge, Venue } from '../../shared/types';
 
@@ -9,14 +9,13 @@ interface LocalEventDescriptionProps {
   description: string;
   scrollComponent: React.MutableRefObject<HTMLElement | undefined>;
   scrollXComponent: React.MutableRefObject<HTMLElement | undefined>;
+  eventUrl: string;
 }
 
 const LocalEventDescription = (props: LocalEventDescriptionProps) => {
+  const theme = useTheme();
   const isMobile = useIsMobile();
   const topics = (() => {
-    if (isMobile) {
-      return props.topics.edges.slice(0, 3);
-    }
     return props.topics.edges;
   })();
 
@@ -78,7 +77,7 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
           justifyContent: 'center',
           maxHeight: '15rem',
           overflowY: 'auto',
-          border: '1px solid white',
+          border: '1px solid ' + theme.palette.primary.main,
           borderRadius: '5px',
           width: isMobile ? '17.5rem' : '100%',
         }}
@@ -97,12 +96,34 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
           {props.description || 'No Description Provided'}
         </Typography>
       </Box>
-
+      {isMobile ? (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
+            marginY: '1rem',
+            width: '100%',
+          }}
+        >
+          <OutlinedInput
+            type="button"
+            onClick={() => window.open(props.eventUrl)}
+            sx={{
+              width: '100%',
+              height: '100%',
+              border: '.5px solid ' + theme.palette.primary.main,
+            }}
+            value="Find out More"
+            fullWidth
+          />
+        </Box>
+      ) : null}
       <Box
         sx={{
-          width: isMobile ? '75%' : '100%',
+          width: '100%',
+          maxWidth: isMobile ? '17.5rem' : 'unset',
           display: 'flex',
-          paddingTop: '1rem',
           overflowX: 'auto',
           '&::-webkit-scrollbar': {
             display: 'none',
@@ -118,7 +139,11 @@ const LocalEventDescription = (props: LocalEventDescriptionProps) => {
               label={edge.node.name}
               variant="filled"
               color="success"
-              sx={{ flex: 1, marginX: '.15rem' }}
+              sx={{
+                display: 'flex',
+                marginX: '.15rem',
+                flex: 1,
+              }}
             />
           </Box>
         ))}

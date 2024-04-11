@@ -299,12 +299,13 @@ const WeatherView = (props: WeatherViewProps) => {
                   <Box
                     key={idx}
                     sx={{
-                      width: '20rem',
+                      width: '100%',
                     }}
                   >
                     <LocalEvent
                       timezone={locationData?.timezone}
-                      openIndex={idx}
+                      currentIndex={idx}
+                      openIndex={indexOpen}
                       outerScrollComponent={outerScrollComponent}
                       handleOpenIndex={handleOpenIndex}
                       eventOpen={indexOpen === idx && !isInputFocused}
