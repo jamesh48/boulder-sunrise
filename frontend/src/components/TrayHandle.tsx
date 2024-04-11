@@ -17,16 +17,20 @@ const TrayHandle = (props: TrayHandleProps) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const isMobile = useIsMobile();
+  const weatherView = useSelector(getWeatherView);
+  const userView = useSelector(getUserView);
 
-  const { view, transform, action, border } = {
+  const { view, transform, action, border, opposingView } = {
     l: {
-      view: useSelector(getWeatherView),
+      view: weatherView,
+      opposingView: userView,
       transform: 'rotate(90deg)',
       action: toggleWeatherView,
       border: 'borderLeft',
     },
     r: {
-      view: useSelector(getUserView),
+      view: userView,
+      opposingView: weatherView,
       transform: 'rotate(-90deg)',
       action: toggleUserView,
       border: 'borderRight',
@@ -38,9 +42,9 @@ const TrayHandle = (props: TrayHandleProps) => {
       sx={{
         [border]: `3px solid ${theme.palette.primary.main}`,
         height: '100vh',
-        display: 'flex',
         alignItems: 'center',
-        width: isMobile && view ? 0 : 'unset',
+        display: isMobile && opposingView ? 'none' : 'flex',
+        zIndex: 1,
       }}
     >
       <IconButton
@@ -54,6 +58,7 @@ const TrayHandle = (props: TrayHandleProps) => {
         onClick={() => {
           dispatch(action());
         }}
+        disableTouchRipple
       >
         {view ? (
           <ExpandMoreTwoTone sx={{ transform }} />
