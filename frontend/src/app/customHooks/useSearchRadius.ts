@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useSearchRadius = (initialState: number) => {
+const useSearchRadius = (initialState: number = 5) => {
   const [searchRadius, setSearchRadius] = useState(initialState);
   const [confirmedSearchRadius, setConfirmedSearchRadius] =
     useState(initialState);

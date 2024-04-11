@@ -8,6 +8,7 @@ export const appInitialState: {
   userView: boolean;
   stateSwitch: boolean;
   disabledTraySwipe: boolean;
+  searchAdditionalOptionsOpen: boolean;
   showSunDial: boolean;
 } = {
   userLocation: '',
@@ -16,6 +17,7 @@ export const appInitialState: {
   userView: false,
   stateSwitch: false,
   disabledTraySwipe: false,
+  searchAdditionalOptionsOpen: false,
   showSunDial: true,
 };
 
@@ -23,6 +25,9 @@ export const appSlice = createSlice({
   name: 'app',
   initialState: appInitialState,
   reducers: {
+    setSearchAdditionalOptionsOpen: (state, action: PayloadAction<boolean>) => {
+      state.searchAdditionalOptionsOpen = action.payload;
+    },
     setUserLocation: (state, action: PayloadAction<string>) => {
       state.userLocation = action.payload;
     },
@@ -57,8 +62,11 @@ export const {
   toggleStateSwitch,
   accuateDisabledTraySwipe,
   setShowSunDial,
+  setSearchAdditionalOptionsOpen,
 } = appSlice.actions;
 
+export const getSearchAdditionalOptionsOpen = (state: RootState) =>
+  state.app.searchAdditionalOptionsOpen;
 export const getShowSunDial = (state: RootState) => state.app.showSunDial;
 export const getStateSwitch = (state: RootState) => state.app.stateSwitch;
 export const getUserLocation = (state: RootState) => state.app.userLocation;

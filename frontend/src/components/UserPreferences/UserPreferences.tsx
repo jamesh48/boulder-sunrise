@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
-import { ExpandLessTwoTone, ExpandMoreTwoTone } from '@mui/icons-material';
 import {
   Box,
   Collapse,
   Typography,
-  IconButton,
   OutlinedInput,
   TextField,
 } from '@mui/material';
@@ -17,11 +15,10 @@ import {
   getUserView,
   setUserLocation,
   toggleWeatherView,
-  toggleUserView,
   toggleStateSwitch,
-  getWeatherView,
 } from '@/app/appSlice';
 import useIsMobile from '@/app/customHooks/useIsMobile';
+import TrayHandle from '../TrayHandle';
 
 interface UserPreferencesProps {}
 
@@ -29,7 +26,6 @@ const UserPreferences = (_props: UserPreferencesProps) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const isMobile = useIsMobile();
-  const weatherView = useSelector(getWeatherView);
   const [validState, setValidState] = useState('');
   const userView = useSelector(getUserView);
   const [defaultCity, defaultState] = useSelector(getUserLocation).split(',');
@@ -51,34 +47,8 @@ const UserPreferences = (_props: UserPreferencesProps) => {
         color: theme.palette.text.primary,
       }}
     >
-      <Box
-        sx={{
-          borderRight: `3px solid ${theme.palette.primary.main}`,
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          width: isMobile && weatherView ? 0 : 'unset',
-        }}
-      >
-        <IconButton
-          sx={{
-            padding: '.5rem',
-            color: theme.palette.primary.main,
-            display: 'flex',
-            alignItems: 'center',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            dispatch(toggleUserView());
-          }}
-        >
-          {userView ? (
-            <ExpandMoreTwoTone sx={{ transform: 'rotate(-90deg)' }} />
-          ) : (
-            <ExpandLessTwoTone sx={{ transform: 'rotate(-90deg)' }} />
-          )}
-        </IconButton>
-      </Box>
+      <TrayHandle side="r" />
+
       <Collapse
         onExited={() => dispatch(toggleStateSwitch())}
         in={userView}

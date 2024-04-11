@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useSortOrder = (initialState: string) => {
+const useSortOrder = (initialState: string = 'ASC') => {
   const [sortOrder, setSortOrder] = useState(initialState);
   const [confirmedSortOrder, setConfirmedSortOrder] = useState(initialState);
 
