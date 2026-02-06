@@ -41,12 +41,12 @@ const SunDial = (props: SunDialProps) => {
     },
     {
       skip: !props.isLoggedIn,
-    }
+    },
   );
   const isLoggedIn = Boolean(userLocation);
   const { data: locationData } = useGetCurrentTimeZoneQuery(
     { city: userLocation },
-    { skip: !isLoggedIn }
+    { skip: !isLoggedIn },
   );
 
   const sunsetLineRef = useRef<HTMLHRElement>(null);
@@ -63,7 +63,7 @@ const SunDial = (props: SunDialProps) => {
 
   const sunrise = constructLocalDate(
     weatherReport?.sys.sunrise || 0,
-    locationData?.timezone
+    locationData?.timezone,
   );
   const sunriseStr = `Sunrise: ${sunrise.getHours()}:${
     sunrise.getMinutes().toString().length === 1 ? '0' : ''
@@ -71,13 +71,13 @@ const SunDial = (props: SunDialProps) => {
 
   const sunset = constructLocalDate(
     weatherReport?.sys.sunset || 0,
-    locationData?.timezone
+    locationData?.timezone,
   );
   const sunsetStr = `Sunset: ${
     sunset.getHours() - 12
   }:${sunset.getMinutes()}pm`;
   const now = moment(
-    constructLocalDate(Date.now(), locationData?.timezone, true)
+    constructLocalDate(Date.now(), locationData?.timezone, true),
   );
   const isMoonTime = now.isBefore(sunrise) || now.isAfter(sunset);
 

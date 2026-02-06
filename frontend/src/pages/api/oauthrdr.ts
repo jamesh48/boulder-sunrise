@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import fetch from 'node-fetch';
 const { MEETUP_CLIENT_KEY, MEETUP_CLIENT_SECRET } = process.env;
 
-const MEETUP_CLIENT_RDR_URL = 'www.bertramcappuccino.com/api/oauthrdr';
+// Update with production url
+const MEETUP_CLIENT_RDR_URL = 'http://localhost:8080/api/oauthrdr';
 
 async function requestAccessToken(
   clientId: string,

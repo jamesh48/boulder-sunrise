@@ -20,7 +20,7 @@ const BoulderShines = () => {
     {
       location: userLocation,
     },
-    { skip: !isLoggedIn }
+    { skip: !isLoggedIn },
   );
 
   const theme = createTheme({
